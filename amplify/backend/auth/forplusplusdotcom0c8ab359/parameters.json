@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "forpluspluse2f005b4_identitypool_e2f005b4",
+    "identityPoolName": "forplusplusdotcom0c8ab359_identitypool_0c8ab359",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "forplue2f005b4",
-    "userPoolName": "forpluspluse2f005b4_userpool_e2f005b4",
+    "resourceNameTruncated": "forplu0c8ab359",
+    "userPoolName": "forplusplusdotcom0c8ab359_userpool_0c8ab359",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -18,7 +18,9 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email"
+        "email",
+        "name",
+        "picture"
     ],
     "userpoolClientGenerateSecret": true,
     "userpoolClientRefreshTokenValidity": 30,
@@ -28,10 +30,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "forplue2f005b4_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "forplu0c8ab359_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "e2f005b4",
-    "resourceName": "forpluspluse2f005b4",
+    "sharedId": "0c8ab359",
+    "resourceName": "forplusplusdotcom0c8ab359",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,13 +49,18 @@
     },
     "useDefault": "defaultSocial",
     "hostedUI": true,
-    "hostedUIDomainName": "forpluspluse2f005b4-e2f005b4",
+    "triggers": "{}",
+    "hostedUIDomainName": "forplusplus",
     "authProvidersUserPool": [
         "Google"
     ],
-    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
+    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"name\":\"name\",\"picture\":\"picture\",\"username\":\"sub\"}}]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://forplusplus.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://forplusplus.com/\"]}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
-    "dependsOn": [],
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\"],\"LogoutURLs\":[\"http://localhost:3000/\"]}"
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [],
+    "dependsOn": []
 }

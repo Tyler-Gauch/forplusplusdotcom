@@ -1,6 +1,6 @@
 {
   "auth": {
-    "forpluspluse2f005b4": {
+    "forplusplusdotcom0c8ab359": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

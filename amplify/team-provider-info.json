@@ -1,19 +1,19 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-forplusplus-dev-52422-authRole",
-      "UnauthRoleArn": "arn:aws:iam::603474971076:role/amplify-forplusplus-dev-52422-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::603474971076:role/amplify-forplusplus-dev-52422-authRole",
+      "AuthRoleName": "amplify-forplusplusdotcom-dev-163240-authRole",
+      "UnauthRoleArn": "arn:aws:iam::603474971076:role/amplify-forplusplusdotcom-dev-163240-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::603474971076:role/amplify-forplusplusdotcom-dev-163240-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-forplusplus-dev-52422-deployment",
-      "UnauthRoleName": "amplify-forplusplus-dev-52422-unauthRole",
-      "StackName": "amplify-forplusplus-dev-52422",
-      "StackId": "arn:aws:cloudformation:us-east-2:603474971076:stack/amplify-forplusplus-dev-52422/8d4cef10-06ec-11eb-a9fb-0acdb02a9e76",
-      "AmplifyAppId": "d20nptsg5h0hgf"
+      "DeploymentBucketName": "amplify-forplusplusdotcom-dev-163240-deployment",
+      "UnauthRoleName": "amplify-forplusplusdotcom-dev-163240-unauthRole",
+      "StackName": "amplify-forplusplusdotcom-dev-163240",
+      "StackId": "arn:aws:cloudformation:us-east-2:603474971076:stack/amplify-forplusplusdotcom-dev-163240/e918b650-0749-11eb-ae27-06e0ced8ee4a",
+      "AmplifyAppId": "d1nzho3748n0rz"
     },
     "categories": {
       "auth": {
-        "forpluspluse2f005b4": {
+        "forplusplusdotcom0c8ab359": {
           "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"889531941755-oe8ias9eje2otn405v5mkhh5jje65pka.apps.googleusercontent.com\",\"client_secret\":\"5GBqdyoeCD1t9GCKCRJzN_2m\"}]"
         }
       }
