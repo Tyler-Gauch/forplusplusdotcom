@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="750" viewBox="0 0 750 750">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #b7e1f3;
+        stroke: #4d5558;
+        stroke-width: 7.41px;
+      }
+
+      .cls-2 {
+        font-size: 75px;
+        fill: #c33;
+        text-anchor: middle;
+        font-family: "Source Sans Variable";
+        text-transform: uppercase;
+      }
+    </style>
+  </defs>
+  <ellipse class="cls-1" cx="377" cy="378" rx="369" ry="370"/>
+  <text id="_4" data-name="4" class="cls-2" transform="translate(226.348 590.057) scale(9.011)"><tspan x="0">4</tspan></text>
+  <text id="_" data-name="+" class="cls-2" transform="matrix(7.177, 0, 0, 7.177, 492.799, 401.08)"><tspan x="0">+</tspan></text>
+  <text id="_2" data-name="+" class="cls-2" transform="matrix(7.177, 0, 0, 7.177, 585.799, 626.08)"><tspan x="0">+</tspan></text>
+  <text id="Lorem_Ipsum" data-name="Lorem Ipsum" class="cls-2" x="789.997" y="-408"><tspan x="789.997">Lorem Ipsum</tspan></text>
+</svg>

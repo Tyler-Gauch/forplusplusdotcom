@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import '../../css/components/App.css';
+import '../css/components/App.css';
 import Amplify, {Auth, Hub} from 'aws-amplify';
-import config from '../../aws-exports';
+import config from '../aws-exports';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { NavigationBar } from './components/NavigationBar';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -61,10 +64,14 @@ class App extends Component {
     const { user } = this.state;
 
     return (
-      <div className="App">
-        <button onClick={() => Auth.federatedSignIn({provider: 'Google'})}>Open Google</button>
-        {user && <button onClick={() => Auth.signOut()}>Sign Out {user.getUsername()}</button>}
-      </div>
+        <React.Fragment>
+          <Router>
+            <NavigationBar
+              callback={user ? () => Auth.signOut() : () => Auth.federatedSignIn({provider: 'Google'})}
+              loginText={user ? "Logout" : "Login"}
+            />
+          </Router>
+        </React.Fragment>
     );
   }
 }
