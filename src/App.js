@@ -24,8 +24,8 @@ const oauth = {
 
 // if not, update the URLs
 if (!isLocalhost) {
-  oauth.redirectSignIn = 'https://forplusplus.com/';
-  oauth.redirectSignOut = 'https://forplusplus.com/';
+  oauth.redirectSignIn = 'https://www.forplusplus.com/';
+  oauth.redirectSignOut = 'https://www.forplusplus.com/';
 }
 
 // copy the constant config (aws-exports.js) because config is read only.
