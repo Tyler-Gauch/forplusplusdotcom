@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './App.css';
+import '../../css/components/App.css';
 import Amplify, {Auth, Hub} from 'aws-amplify';
-import config from './aws-exports';
+import config from '../../aws-exports';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
