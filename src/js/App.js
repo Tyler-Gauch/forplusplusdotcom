@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import '../css/components/App.css';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NavigationBar from './components/NavigationBar';
 
