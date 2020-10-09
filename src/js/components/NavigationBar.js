@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Navbar, Nav, NavDropdown} from "react-bootstrap";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import PropTypes from "prop-types";
 
 class NavigationBar extends Component {
