@@ -1,46 +1,48 @@
-import React, {Component} from 'react';
-import { Nav, Navbar, Form, FormControl } from 'react-bootstrap';
-import styled from 'styled-components';
-const Styles = styled.div`
-  .navbar { background-color: #222; }
-  a, .navbar-nav, .navbar-light .nav-link {
-    color: #9FFFCB;
-    &:hover { color: white; }
-  }
-  .navbar-brand {
-    font-size: 1.4em;
-    color: #9FFFCB;
-    &:hover { color: white; }
-  }
-  .form-center {
-    position: absolute !important;
-    left: 25%;
-    right: 25%;
-  }
-`;
+import React, { Component } from "react";
+import { Navbar, Nav, NavDropdown} from "react-bootstrap";
+import PropTypes from "prop-types";
 
-export const NavigationBar = ({loginText, callback}) => (
-  <Styles>
-    <Navbar bg="dark" variant="dark">
-      <Navbar.Brand href="/">
-        <img
-            src="/logo.svg"
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-            alt="ForPlusPlus"
-        />
-      </Navbar.Brand>
-      <Form className="form-center">
-        <FormControl type="text" placeholder="Search" className="" />
-      </Form>
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="ml-auto">
-          <Nav.Item><Nav.Link href="/">Home</Nav.Link></Nav.Item> 
-          <Nav.Item><Nav.Link href="/about">About</Nav.Link></Nav.Item>
-          <Nav.Item><Nav.Link onClick={callback}>{loginText}</Nav.Link></Nav.Item>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-  </Styles>
-)
+class NavigationBar extends Component {
+  state = {
+    isOpen: false
+  };
+
+  toggleCollapse = () => {
+    this.setState({ isOpen: !this.state.isOpen });
+  }
+
+  render() {
+    return (
+      <Navbar bg="light" expand="lg">
+        <Navbar.Brand href="#home">ForPlusPlus</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link href="#home">Home</Nav.Link>
+            <Nav.Link href="#link">Link</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+        <Navbar.Collapse className="justify-content-end">
+              {this.props.userAttributes
+                ?
+                  <NavDropdown title={this.props.userAttributes.name} id="my-account-dropdown">
+                    <NavDropdown.Item href="#">Subscribe</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href="#" onClick={this.props.logoutCallback}>Logout</NavDropdown.Item>
+                  </NavDropdown>
+                :
+                  <NavDropdown title="My Account" id="my-account-dropdown">
+                    <NavDropdown.Item href="#" onClick={this.props.loginCallback}>Login</NavDropdown.Item>
+                  </NavDropdown>
+              }
+        </Navbar.Collapse>
+      </Navbar>
+      );
+    }
+}
+
+NavigationBar.propTypes = {
+  userAttributes: PropTypes.object
+};
+
+export default NavigationBar;

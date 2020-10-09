@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import '../css/components/App.css';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { NavigationBar } from './components/NavigationBar';
+import NavigationBar from './components/NavigationBar';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -39,7 +39,12 @@ configUpdate.oauth = {...config.oauth, ...oauth};
 Amplify.configure(configUpdate);
 
 class App extends Component {
-  state = { user: null, customState: null };
+  state = {
+    user: null,
+    customState: null,
+    userPhoto: null,
+    userName: null
+  };
 
   componentDidMount() {
     Hub.listen("auth", ({ payload: { event, data } }) => {
@@ -62,16 +67,18 @@ class App extends Component {
 
   render() {
     const { user } = this.state;
+    console.log(user);
 
     return (
-        <React.Fragment>
-          <Router>
-            <NavigationBar
-              callback={user ? () => Auth.signOut() : () => Auth.federatedSignIn({provider: 'Google'})}
-              loginText={user ? "Logout" : "Login"}
-            />
-          </Router>
-        </React.Fragment>
+      <Fragment>
+        <Router>
+          <NavigationBar
+            loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
+            logoutCallback={() => Auth.signOut()}
+            userAttributes={user && user.attributes ? user.attributes : null}
+          />
+        </Router>
+      </Fragment>
     );
   }
 }
