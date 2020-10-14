@@ -1,0 +1,13 @@
+.sidebar {
+    position: sticky;
+    top: 4rem;
+    z-index: 1000;
+    height: calc(100vh - 4rem);
+    background-color: #f7f7f7;
+    border-right: 1px solid #ececec;
+    padding: 1rem;
+}
+
+.sidebar .searchbar {
+    border-bottom: 1px solid #ececec;
+}

@@ -1,9 +1,11 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import '../css/components/App.css';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NavigationBar from './components/NavigationBar';
+import NavigationSideBar from './components/NavigationSideBar';
+import {Container, Row, Col } from "react-bootstrap";
+import '../css/utils.css';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -26,6 +28,7 @@ const oauth = {
 
 // if not, update the URLs
 if (!isLocalhost) {
+  // TODO: Add these to auth config
   oauth.redirectSignIn = 'https://www.forplusplus.com/';
   oauth.redirectSignOut = 'https://www.forplusplus.com/';
 }
@@ -56,6 +59,9 @@ class App extends Component {
           break;
         case "customOAuthState":
           this.setState({ customState: data });
+          break;
+        default:
+          break;
       }
     });
 
@@ -69,15 +75,25 @@ class App extends Component {
     console.log(user);
 
     return (
-      <Fragment>
-        <Router>
-          <NavigationBar
-            loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
-            logoutCallback={() => Auth.signOut()}
-            userAttributes={user && user.attributes ? user.attributes : null}
-          />
-        </Router>
-      </Fragment>
+        <Container fluid className="no-padding">
+          <Row>
+            <Col>
+              <NavigationBar
+                loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
+                logoutCallback={() => Auth.signOut()}
+                userAttributes={user && user.attributes ? user.attributes : null}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={2}>
+              <NavigationSideBar/>
+            </Col>
+            <Col xs={10} id="page-content">
+              Hello world!
+            </Col>
+          </Row>
+        </Container>
     );
   }
 }

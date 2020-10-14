@@ -17,7 +17,7 @@ class NavigationBar extends Component {
 
   render() {
     return (
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="dark" expand="lg" variant="dark">
         <Navbar.Brand href="#home">ForPlusPlus</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
