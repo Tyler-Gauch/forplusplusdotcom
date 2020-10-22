@@ -1,13 +1,15 @@
-import React, {Component, Fragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../css/components/App.scss';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
-import {Container, Row, Col, NavItem, Nav } from "react-bootstrap";
+import {Container, Row, Col} from "react-bootstrap";
 import Sidebar from './components/Sidebar';
 import NavigationBar from './components/NavigationBar';
 import { useCurrentBreakpointName } from 'react-socks';
 import { FORCE_SIDEBAR_SHOW_BREAKPOINTS } from './Constants';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import CoursePage from './components/CoursePage';
+import {COURSES} from '../js/data/Courses';
 import VideoPage from './components/VideoPage';
 
 // copied from serviceWorker.js to know if it is localhost or not
@@ -79,7 +81,7 @@ const App = () => {
     <Router>
         <Container fluid id="container">
           <Row noGutters>
-            <Col noGutters>
+            <Col>
               <NavigationBar
                 openSidebarCallback={() => updateIsSidebarVisible(!isSidebarVisible)}
                 isSidebarVisible={shouldShowSidebar}
@@ -92,9 +94,20 @@ const App = () => {
             </Col>
             <Col lg={10} onClick={() => updateIsSidebarVisible(false)} id="content-wrapper">
               <Switch>
-                <Route path="/courses">
-                  <VideoPage heading="No courses yet! Check out this funny video!" videoSrc="https://www.youtube.com/embed/lX1fKrCBjww"/>
-                </Route>
+                {COURSES.map(course => {
+                    return course.videos.map(video => (
+                        <Route path={`/course/${course.id}/${video.id}`} key={`${course.id}-${video.id}`}>
+                            <VideoPage {...video} />
+                        </Route>
+                    ));
+                })}
+                {COURSES.map(course => (
+                    <Route path={`/course/${course.id}`} key={course.id}>
+                      <CoursePage
+                        {...course}
+                      />
+                    </Route>
+                ))}
                 <Route path="/about">ForPlusPlus is a platform that teaches you how to code in 5 minutes or less!</Route>
                 <Route path="/contact">Contact ForPlusPlus at forplusplus4@gmail.com</Route>
                 <Route path="/">Welcome to ForPlusPlus! More content soon!</Route>

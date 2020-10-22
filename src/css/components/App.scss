@@ -5,3 +5,17 @@
 #content-wrapper {
   padding: 15px;
 }
+
+.debug-layout {
+  & .row {
+    border: 1px solid;
+
+    & [class="col*"] {
+      border: 1px solid;
+    }  
+  }
+
+  & [class^="col"] {
+    border: 1px solid;
+  }
+}
