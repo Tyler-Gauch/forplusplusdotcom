@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../css/components/Sidebar.scss';
 import classNames from 'classnames';
+import {Link} from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -27,18 +28,16 @@ const Sidebar = ({isVisible}) => {
                 </Form.Group>
             </Form>
             <Nav.Item>
-                <Nav.Link href="/home">Active</Nav.Link>
+                <Nav.Link><Link to="/">Home</Link></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link eventKey="link-1">Link</Nav.Link>
+                <Nav.Link><Link to="/courses">Courses</Link></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link eventKey="link-2">Link</Nav.Link>
+                <Nav.Link><Link to="/about">About</Link></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link eventKey="disabled" disabled>
-                Disabled
-                </Nav.Link>
+                <Nav.Link><Link to="/contact">Contact</Link></Nav.Link>
             </Nav.Item>
         </Nav>
         </>

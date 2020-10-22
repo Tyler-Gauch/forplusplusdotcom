@@ -7,6 +7,8 @@ import Sidebar from './components/Sidebar';
 import NavigationBar from './components/NavigationBar';
 import { useCurrentBreakpointName } from 'react-socks';
 import { FORCE_SIDEBAR_SHOW_BREAKPOINTS } from './Constants';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import VideoPage from './components/VideoPage';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -74,7 +76,7 @@ const App = () => {
   const shouldShowSidebar = isSidebarVisible || FORCE_SIDEBAR_SHOW_BREAKPOINTS.indexOf(currentBreakpoint) !== -1;
 
   return (
-    <Fragment>
+    <Router>
         <Container fluid id="container">
           <Row noGutters>
             <Col noGutters>
@@ -89,11 +91,18 @@ const App = () => {
               <Sidebar isVisible={shouldShowSidebar}/>
             </Col>
             <Col lg={10} onClick={() => updateIsSidebarVisible(false)} id="content-wrapper">
-              This design is responsive!
+              <Switch>
+                <Route path="/courses">
+                  <VideoPage heading="No courses yet! Check out this funny video!" videoSrc="https://www.youtube.com/embed/lX1fKrCBjww"/>
+                </Route>
+                <Route path="/about">ForPlusPlus is a platform that teaches you how to code in 5 minutes or less!</Route>
+                <Route path="/contact">Contact ForPlusPlus at forplusplus4@gmail.com</Route>
+                <Route path="/">Welcome to ForPlusPlus! More content soon!</Route>
+              </Switch>
             </Col>
           </Row>
         </Container>
-      </Fragment>
+      </Router>
   );
 }
 
