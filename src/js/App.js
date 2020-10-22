@@ -1,11 +1,12 @@
-import React, {Component} from 'react';
-import '../css/components/App.css';
+import React, {Component, Fragment, useEffect, useState} from 'react';
+import '../css/components/App.scss';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
+import {Container, Row, Col, NavItem, Nav } from "react-bootstrap";
+import Sidebar from './components/Sidebar';
 import NavigationBar from './components/NavigationBar';
-import NavigationSideBar from './components/NavigationSideBar';
-import {Container, Row, Col } from "react-bootstrap";
-import '../css/utils.css';
+import { useCurrentBreakpointName } from 'react-socks';
+import { FORCE_SIDEBAR_SHOW_BREAKPOINTS } from './Constants';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -40,15 +41,14 @@ configUpdate.oauth = {...config.oauth, ...oauth};
 // Configure Amplify with configUpdate
 Amplify.configure(configUpdate);
 
-class App extends Component {
-  state = {
-    user: null,
-    customState: null,
-    userPhoto: null,
-    userName: null
-  };
+const App = () => {
+  const [user, updateUser] = useState(null);
+  const [customState, updateCustomState] = useState(null);
+  const [userPhoto, updateUserPhoto] = useState(null);
+  const [userName, updateUserName] = useState(null);
+  const [isSidebarVisible, updateIsSidebarVisible] = useState(null);
 
-  componentDidMount() {
+  useEffect(() => {
     Hub.listen("auth", ({ payload: { event, data } }) => {
       switch (event) {
         case "signIn":
@@ -68,34 +68,33 @@ class App extends Component {
     Auth.currentAuthenticatedUser()
       .then(user => this.setState({ user }))
       .catch(() => console.log("Not signed in"));
-  }
+  });
 
-  render() {
-    const { user } = this.state;
-    console.log(user);
+  const currentBreakpoint = useCurrentBreakpointName();
+  const shouldShowSidebar = isSidebarVisible || FORCE_SIDEBAR_SHOW_BREAKPOINTS.indexOf(currentBreakpoint) !== -1;
 
-    return (
-        <Container fluid className="no-padding">
-          <Row>
-            <Col>
+  return (
+    <Fragment>
+        <Container fluid id="container">
+          <Row noGutters>
+            <Col noGutters>
               <NavigationBar
-                loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
-                logoutCallback={() => Auth.signOut()}
-                userAttributes={user && user.attributes ? user.attributes : null}
+                openSidebarCallback={() => updateIsSidebarVisible(!isSidebarVisible)}
+                isSidebarVisible={shouldShowSidebar}
               />
             </Col>
           </Row>
           <Row>
-            <Col xs={2}>
-              <NavigationSideBar/>
+            <Col lg={2}>
+              <Sidebar isVisible={shouldShowSidebar}/>
             </Col>
-            <Col xs={10} id="page-content">
-              Hello world!
+            <Col lg={10} onClick={() => updateIsSidebarVisible(false)} id="content-wrapper">
+              This design is responsive!
             </Col>
           </Row>
         </Container>
-    );
-  }
+      </Fragment>
+  );
 }
 
 export default App;

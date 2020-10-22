@@ -1,0 +1,25 @@
+
+@import '../utils/colors';
+
+  
+.sidebar {
+    height: 0; /* Specify a height */
+    width: 100%; /* 0 width - change this with JavaScript */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #111; /* Black*/
+    overflow-y: hidden; /* Disable horizontal scroll */
+    transition: height 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+    padding: 0px;
+
+    &.show {
+        height: 100%;
+        padding: 15px;
+    }
+}
+
+.sidebar .searchbar {
+    border-bottom: 1px solid #ececec;
+}

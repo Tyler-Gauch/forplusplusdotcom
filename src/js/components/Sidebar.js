@@ -1,10 +1,23 @@
-import React, { Fragment } from "react";
-import {Form, Nav} from "react-bootstrap";
-import '../../css/components/NavigationSideBar.css'
+import React, {useState} from 'react';
+import PropTypes from 'prop-types';
+import { Button, Col, Form, Nav, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import styles from '../../css/components/Sidebar.scss';
+import classNames from 'classnames';
 
-const NavigationSideBar = props => {
+const cx = classNames.bind(styles);
+
+const Sidebar = ({isVisible}) => {
     return (
-        <Nav className="bg-light flex-column sidebar"
+        <>
+        <Nav
+            className={cx({
+                "bg-light": true,
+                "flex-column": true,
+                sidebar: true,
+                show: isVisible
+            })}
             activeKey="/home"
             onSelect={selectedKey => alert(`selected ${selectedKey}`)}
         >
@@ -28,7 +41,17 @@ const NavigationSideBar = props => {
                 </Nav.Link>
             </Nav.Item>
         </Nav>
+        </>
     );
-  };
+};
 
-  export default NavigationSideBar
+Sidebar.propTypes = {
+    isVisible: PropTypes.bool,
+    toggleVisiblity: PropTypes.func
+};
+
+Sidebar.defaultProps = {
+    isVisible: true
+}
+
+export default Sidebar;
