@@ -1,11 +1,11 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import Video from './Video';
 import {Row, Col} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import '../../css/components/VideoPage.scss';
 import PropTypes from 'prop-types';
 
-const VideoPage = ({id, title, videoSrc, descriptionHtml, nextVideo, previousVideo}) => (
+const VideoPage = ({title, videoSrc, descriptionHtml, nextVideo, previousVideo}) => (
     <div>
         <Row className="justify-content-center">
             <Col>
@@ -16,18 +16,18 @@ const VideoPage = ({id, title, videoSrc, descriptionHtml, nextVideo, previousVid
             <Col lg={10}>
                 <Row className="justify-content-center align-items-end shadow-sm p-3">
                     <Col lg={{offset: 1, span: 7}}>
-                        <Video src={videoSrc}/>
+                        <Video src={videoSrc} title={title}/>
                     </Col>
                     <Col lg={12}>
                         <Row>
-                            {previousVideo && 
+                            {previousVideo &&
                                 <Col lg={6}>
-                                    <Link to={previousVideo.link}>{previousVideo.text}</Link>
+                                    <Link to={previousVideo.link}>Previous: {previousVideo.text}</Link>
                                 </Col>
                             }
                             {nextVideo &&
                                 <Col lg={(previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
-                                    <Link to={nextVideo.link}>{nextVideo.text}</Link>
+                                    <Link to={nextVideo.link}>Next: {nextVideo.text}</Link>
                                 </Col>
                             }
                         </Row>

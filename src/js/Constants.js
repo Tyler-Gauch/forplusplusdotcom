@@ -5,12 +5,6 @@ export const BREAKPOINT_MD = "md";
 export const BREAKPOINT_LG = "lg";
 export const BREAKPOINT_XL = "xl";
 
-export const FORCE_SIDEBAR_SHOW_BREAKPOINTS = [
-    BREAKPOINT_MD,
-    BREAKPOINT_LG,
-    BREAKPOINT_XL
-];
-
 export const BREAKPOINTS = [
     { [BREAKPOINT_XS]: 0 },
     { [BREAKPOINT_SM]: 576 },
@@ -18,3 +12,5 @@ export const BREAKPOINTS = [
     { [BREAKPOINT_LG]: 992 },
     { [BREAKPOINT_XL]: 1200 }
 ];
+
+export const BRAND_NAME = "ForPlusPlus";

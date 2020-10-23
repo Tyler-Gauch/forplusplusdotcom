@@ -1,16 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import '../css/components/App.scss';
 import Amplify, {Auth, Hub} from 'aws-amplify';
 import config from '../aws-exports';
-import {Container, Row, Col} from "react-bootstrap";
-import Sidebar from './components/Sidebar';
+import {Container} from "react-bootstrap";
 import NavigationBar from './components/NavigationBar';
-import { useCurrentBreakpointName } from 'react-socks';
-import { FORCE_SIDEBAR_SHOW_BREAKPOINTS } from './Constants';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import CoursePage from './components/CoursePage';
 import {COURSES} from '../js/data/Courses';
 import VideoPage from './components/VideoPage';
+import CoursesPage from './components/CoursesPage';
 
 // copied from serviceWorker.js to know if it is localhost or not
 const isLocalhost = Boolean(
@@ -47,22 +45,15 @@ Amplify.configure(configUpdate);
 
 const App = () => {
   const [user, updateUser] = useState(null);
-  const [customState, updateCustomState] = useState(null);
-  const [userPhoto, updateUserPhoto] = useState(null);
-  const [userName, updateUserName] = useState(null);
-  const [isSidebarVisible, updateIsSidebarVisible] = useState(null);
 
   useEffect(() => {
     Hub.listen("auth", ({ payload: { event, data } }) => {
       switch (event) {
         case "signIn":
-          this.setState({ user: data });
+          updateUser(data);
           break;
         case "signOut":
-          this.setState({ user: null });
-          break;
-        case "customOAuthState":
-          this.setState({ customState: data });
+          updateUser(null );
           break;
         default:
           break;
@@ -70,34 +61,25 @@ const App = () => {
     });
 
     Auth.currentAuthenticatedUser()
-      .then(user => this.setState({ user }))
+      .then(user => updateUser(user))
       .catch(() => console.log("Not signed in"));
   });
 
-  const currentBreakpoint = useCurrentBreakpointName();
-  const shouldShowSidebar = isSidebarVisible || FORCE_SIDEBAR_SHOW_BREAKPOINTS.indexOf(currentBreakpoint) !== -1;
-
   return (
     <Router>
-        <Container fluid id="container">
-          <Row noGutters>
-            <Col>
-              <NavigationBar
-                openSidebarCallback={() => updateIsSidebarVisible(!isSidebarVisible)}
-                isSidebarVisible={shouldShowSidebar}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={2}>
-              <Sidebar isVisible={shouldShowSidebar}/>
-            </Col>
-            <Col lg={10} onClick={() => updateIsSidebarVisible(false)} id="content-wrapper">
+          <NavigationBar
+            userAttributes={user && user.attributes ? user.attributes : null}
+            loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
+            logoutCallback={() => Auth.signOut()}
+          />
+          <Container id="content-wrapper">
               <Switch>
                 {COURSES.map(course => {
                     return course.videos.map(video => (
                         <Route path={`/course/${course.id}/${video.id}`} key={`${course.id}-${video.id}`}>
-                            <VideoPage {...video} />
+                            <Suspense fallback={<div>Loading...</div>}>
+                              <VideoPage {...video} />
+                            </Suspense>
                         </Route>
                     ));
                 })}
@@ -108,13 +90,12 @@ const App = () => {
                       />
                     </Route>
                 ))}
+                <Route path="/courses"><CoursesPage /></Route>
                 <Route path="/about">ForPlusPlus is a platform that teaches you how to code in 5 minutes or less!</Route>
                 <Route path="/contact">Contact ForPlusPlus at forplusplus4@gmail.com</Route>
                 <Route path="/">Welcome to ForPlusPlus! More content soon!</Route>
               </Switch>
-            </Col>
-          </Row>
-        </Container>
+          </Container>
       </Router>
   );
 }

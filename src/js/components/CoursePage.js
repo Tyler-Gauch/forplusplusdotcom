@@ -1,15 +1,11 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Row } from 'react-bootstrap';
-import { Link, Route, useRouteMatch } from 'react-router-dom';
-import Switch from 'react-bootstrap/esm/Switch';
-import VideoPage from './VideoPage';
+import { Link } from 'react-router-dom';
 
 const CoursePage = ({id, title, videos, description}) => {
-    let match = useRouteMatch();
-
     return (
-        <Fragment>
+        <>
             <Row>
                 <h4>{title}</h4>
             </Row>
@@ -23,12 +19,18 @@ const CoursePage = ({id, title, videos, description}) => {
                     ))}
                 </ul>
             </Row>
-        </Fragment>
+        </>
     );
 };
 
 CoursePage.propTypes = {
-    
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    videos: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired   
+    }))
 };
 
 export default CoursePage;
