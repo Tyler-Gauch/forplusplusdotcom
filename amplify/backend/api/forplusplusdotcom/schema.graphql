@@ -1,0 +1,22 @@
+type Course @model {
+  id: ID!,
+  title: String!
+  description: String!
+  shortDescription: String!
+  videos: [Video!]!
+  adminOnly: Boolean!
+}
+
+type Video {
+  id: ID!
+  title: String!
+  videoSrc: String!
+  previousVideo: VideoLink
+  nextVideo: VideoLink
+  description: String!
+}
+
+type VideoLink {
+  link: String!
+  text: String!
+}

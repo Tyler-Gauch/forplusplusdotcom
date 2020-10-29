@@ -28,21 +28,23 @@ const NavigationBar = ({userAttributes, logoutCallback, loginCallback}) => {
           </Nav.Item>
         </Nav>
       </Navbar.Collapse>
-      <Navbar.Collapse className="justify-content-end">
-        {userAttributes
-          ?
-            <NavDropdown title={userAttributes.name} id="my-account-dropdown">
-              <NavDropdown.Item href="#">
-                Subscribe <FontAwesomeIcon icon={faYoutube} />
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logoutCallback}>Logout</NavDropdown.Item>
-            </NavDropdown>
-          :
-            <Nav.Item>
-              <Nav.Link onClick={loginCallback}>Login <FontAwesomeIcon icon={faYoutube} /> </Nav.Link>
-            </Nav.Item>
-        }
+      <Navbar.Collapse className="justify-content-end" id="user-admin-nav">
+        <Nav>
+          {userAttributes
+            ?
+              <NavDropdown title={userAttributes.name} id="my-account-dropdown">
+                <NavDropdown.Item href="#">
+                  Subscribe <FontAwesomeIcon icon={faYoutube} />
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={logoutCallback}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            :
+              <Nav.Item>
+                <Nav.Link onClick={loginCallback}>Login <FontAwesomeIcon icon={faYoutube} /> </Nav.Link>
+              </Nav.Item>
+          }
+        </Nav>
       </Navbar.Collapse>
     </Navbar>
     );

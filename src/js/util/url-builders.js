@@ -1,0 +1,1 @@
+export const buildVideoUrl = (courseId, videoId) => `/course/${courseId}/${videoId}`;

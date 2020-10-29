@@ -1,11 +1,17 @@
 import React from 'react';
-import CourseThumbnail from './CourseThumbnail';
-import { COURSES } from '../data/Courses';
-import { Col, Jumbotron, Row } from 'react-bootstrap';
+import CoursePreview from './CoursePreview';
+import { Alert, Jumbotron, Row, Col } from 'react-bootstrap';
 import { BRAND_NAME } from '../Constants';
 import { Link } from 'react-router-dom';
+import NewCourseModal from './NewCourseModal';
+import {connect} from 'react-redux';
 
-const CoursesPage = () => {
+const mapStateToProps = state => {
+    const courses = state.courses || [];
+    return {courses};
+  };
+
+const CoursesPage = ({courses}) => {
     return (
         <>
             <Jumbotron>
@@ -20,16 +26,22 @@ const CoursesPage = () => {
                 </p>
             </Jumbotron>
             <Row>
-                {COURSES.map(course => (
-                    <Col lg={4}>
-                        <CourseThumbnail
+                <Col>
+                    <Alert variant="warning">
+                        <h4>Admin Zone</h4>
+                        <NewCourseModal />
+                    </Alert>
+                </Col>
+            </Row>
+                {courses && courses.map(course => (
+                    <Row key={course.id}>
+                        <CoursePreview
                             {...course}
                         />
-                    </Col>
+                    </Row>
                 ))}
-            </Row>
         </>
     );
 };
 
-export default CoursesPage;
+export default connect(mapStateToProps)(CoursesPage);
