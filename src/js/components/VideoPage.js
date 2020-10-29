@@ -13,6 +13,8 @@ import { addCourses } from '../store/actions';
 import { encodeTitleToId } from '../util/encoders';
 import { useHistory } from 'react-router-dom';
 import { buildVideoUrl } from '../util/url-builders';
+import ReactMarkdown from 'react-markdown';
+import Markdown from './Markdown';
 
 const mapStateToProps = state => {
     const courses = state.courses;
@@ -28,13 +30,15 @@ const VideoPage = ({match, courses, addCourses}) => {
     const [videoNotFound, setVideoNotFound] = useState(false);
     const [updateVideoError, setUpdateVideoError] = useState(null);
     const [edit, setEdit] = useState(false);
-    const [newTitle, setNewTitle] = useState("");
     const history = useHistory();
+
+    const [newTitle, setNewTitle] = useState("");
+    const [newDescription, setNewDescription] = useState("");
 
     const toggleEdit = () => setEdit(!edit);
 
     const handleUpdateTitle = () => {
-        if (newTitle === "") {
+        if (newTitle === "" || newTitle === video.title) {
             return;
         }
 
@@ -46,23 +50,36 @@ const VideoPage = ({match, courses, addCourses}) => {
         }
 
         const newId = encodeTitleToId(newTitle);
-        const {createdAt, updatedAt, ...wantedCourseValues} = course;
+        handleUpdate({...video, id: newId, title: newTitle}, true);
+    };
 
+    const handleUpdateDescription = () => {
+        if (newDescription === "" || newDescription === video.description) {
+            return;
+        }
+
+        handleUpdate({...video, description: newDescription});
+    };
+
+    const handleUpdate = (newVideo, refreshPage = false) => {
+        const {createdAt, updatedAt, ...wantedCourseValues} = course;
 
         const newCourse = {
             ...wantedCourseValues,
-            videos: course.videos.filter(v => v.id !== video.id).concat({...video, id: newId, title: newTitle})
+            videos: course.videos.filter(v => v.id !== video.id).concat([newVideo])
         }
 
         API.graphql(graphqlOperation(updateCourse, {input: newCourse}))
             .then((response) => {
                 addCourses([response.data.getCourse]);
-                history.push(buildVideoUrl(course.id, newId));
+                if (refreshPage) {
+                    history.push(buildVideoUrl(course.id, newVideo.id));
+                }
             })
             .catch(response => {
                 setUpdateVideoError(JSON.stringify(response.errors));
             });
-    };
+    }
 
     const loadVideoFromCourse = (wantedVideoId, course) => {
         const wantedVideo = course.videos.find(v => v.id === wantedVideoId);
@@ -74,6 +91,8 @@ const VideoPage = ({match, courses, addCourses}) => {
         setVideoNotFound(null);
         setCourse(course);
         setVideo(wantedVideo);
+        setNewDescription(wantedVideo.description);
+        setNewTitle(wantedVideo.title);
     };
 
     useEffect(() => {
@@ -110,7 +129,7 @@ const VideoPage = ({match, courses, addCourses}) => {
         );
     }
 
-    return videoNotFound !== null
+    return videoNotFound
         ? (<Alert variant="error"><h4>Sorry we are unable to find the video you are looking for.</h4></Alert>)
         : (<>
             <Alert variant="warning">
@@ -127,8 +146,6 @@ const VideoPage = ({match, courses, addCourses}) => {
                                 <Button variant="primary" onClick={handleUpdateTitle}><FontAwesomeIcon icon={faCheckCircle}/></Button>
                             </InputGroup.Append>
                         </InputGroup>
-                        
-                        
                     }
                 </Col>
             </Row>
@@ -155,9 +172,23 @@ const VideoPage = ({match, courses, addCourses}) => {
                         </Col>
                     </Row>
                     <Row className="shadow-sm pl-5 pr-5 pt-3 pb-3">
-                        <Col>
-                            {video.description}
-                        </Col>
+                            {!edit
+                                ? <Col><Markdown>{video.description}</Markdown></Col>
+                                : <>
+                                    <Col lg={12}>
+                                    <InputGroup className="mb-3">
+                                        <FormControl as="textarea" aria-label="With textarea" defaultValue={video.description} onChange={event => setNewDescription(event.target.value)}/>
+                                        <InputGroup.Append>
+                                            <Button variant="primary" onClick={handleUpdateDescription}><FontAwesomeIcon icon={faCheckCircle}/></Button>
+                                        </InputGroup.Append>
+                                    </InputGroup>
+                                     
+                                    </Col>
+                                    <Col lg={12}>
+                                        <Markdown>{newDescription}</Markdown>
+                                    </Col>
+                                  </>
+                            }
                     </Row>
                 </Col>
                 <Col lg={2} className="shadow-sm">
