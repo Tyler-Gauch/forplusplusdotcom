@@ -75,7 +75,7 @@ const App = ({setUser, addCourses, user, courses}) => {
 
     getUser().then(userData => setUser(userData));
 
-    API.graphql(graphqlOperation(listCourses)).then(response => {
+    API.graphql({...graphqlOperation(listCourses), authMode: 'API_KEY'}).then(response => {
         addCourses(response.data.listCourses.items);
     });
   }, [addCourses, setUser]);

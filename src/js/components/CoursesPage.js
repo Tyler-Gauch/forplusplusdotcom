@@ -8,10 +8,11 @@ import {connect} from 'react-redux';
 
 const mapStateToProps = state => {
     const courses = state.courses || [];
-    return {courses};
+    const user = state.user || null;
+    return {courses, user};
   };
 
-const CoursesPage = ({courses}) => {
+const CoursesPage = ({courses, user}) => {
     return (
         <>
             <Jumbotron>
@@ -25,21 +26,29 @@ const CoursesPage = ({courses}) => {
                     Seeing how there aren't any coding videos yet please let us know what you would like to see here and enjoy this call of duty content!
                 </p>
             </Jumbotron>
-            <Row>
-                <Col>
-                    <Alert variant="warning">
-                        <h4>Admin Zone</h4>
-                        <NewCourseModal />
-                    </Alert>
-                </Col>
-            </Row>
-                {courses && courses.map(course => (
-                    <Row key={course.id}>
-                        <CoursePreview
-                            {...course}
-                        />
-                    </Row>
-                ))}
+            {user && user.isAdmin() &&
+                <Row>
+                    <Col>
+                        <Alert variant="warning">
+                            <h4>Admin Zone</h4>
+                            <NewCourseModal />
+                        </Alert>
+                    </Col>
+                </Row>
+            }
+                {courses && courses.map(course => {
+                    
+                    if (course.adminOnly && (!user || !user.isAdmin())) {
+                        return;
+                    }
+
+                    return (
+                        <Row key={course.id}>
+                            <CoursePreview
+                                {...course}
+                            />
+                        </Row>
+                )})}
         </>
     );
 };

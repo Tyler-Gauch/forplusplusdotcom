@@ -1,5 +1,11 @@
 {
     "AppSyncApiName": "forplusplusdotcom",
     "DynamoDBBillingMode": "PAY_PER_REQUEST",
-    "DynamoDBEnableServerSideEncryption": false
+    "DynamoDBEnableServerSideEncryption": false,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authforplusplusdotcom0c8ab359",
+            "Outputs.UserPoolId"
+        ]
+    }
 }

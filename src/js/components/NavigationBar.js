@@ -5,8 +5,15 @@ import { Nav, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
+import { connect } from 'react-redux';
 
-const NavigationBar = ({userAttributes, logoutCallback, loginCallback}) => {
+const mapStateToProps = (state) => {
+    const user = state.user;
+
+    return {user};
+};
+
+const NavigationBar = ({user, logoutCallback, loginCallback}) => {
 
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
@@ -30,13 +37,17 @@ const NavigationBar = ({userAttributes, logoutCallback, loginCallback}) => {
       </Navbar.Collapse>
       <Navbar.Collapse className="justify-content-end" id="user-admin-nav">
         <Nav>
-          {userAttributes
+          {user
             ?
-              <NavDropdown title={userAttributes.name} id="my-account-dropdown">
-                <NavDropdown.Item href="#">
-                  Subscribe <FontAwesomeIcon icon={faYoutube} />
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
+              <NavDropdown title={user.getFullname()} id="my-account-dropdown">
+                {!user.isSubscribed() &&
+                  <>
+                    <NavDropdown.Item href="#">
+                      Subscribe <FontAwesomeIcon icon={faYoutube} />
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                  </>
+                }
                 <NavDropdown.Item onClick={logoutCallback}>Logout</NavDropdown.Item>
               </NavDropdown>
             :
@@ -54,4 +65,4 @@ NavigationBar.propTypes = {
   userAttributes: PropTypes.object
 };
 
-export default NavigationBar;
+export default connect(mapStateToProps)(NavigationBar);

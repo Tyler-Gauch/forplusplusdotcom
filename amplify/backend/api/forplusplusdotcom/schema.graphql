@@ -1,4 +1,12 @@
-type Course @model {
+type Course
+  @model
+  @auth(
+    rules: [
+      {allow: public, operations: [read]},
+      {allow: groups, groups: ["admins"], operations: [create, update, delete]}
+    ]
+  )
+{
   id: ID!,
   title: String!
   description: String!

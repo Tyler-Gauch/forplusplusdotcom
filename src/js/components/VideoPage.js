@@ -13,17 +13,17 @@ import { addCourses } from '../store/actions';
 import { encodeTitleToId } from '../util/encoders';
 import { useHistory } from 'react-router-dom';
 import { buildVideoUrl } from '../util/url-builders';
-import ReactMarkdown from 'react-markdown';
 import Markdown from './Markdown';
 
 const mapStateToProps = state => {
-    const courses = state.courses;
-    return {courses};
+    const courses = state.courses || [];
+    const user = state.user || null;
+    return {courses, user};
 };
 
 const errorMessage = "";
 
-const VideoPage = ({match, courses, addCourses}) => {
+const VideoPage = ({match, courses, addCourses, user}) => {
 
     const [course, setCourse] = useState(null);
     const [video, setVideo] = useState(null);
@@ -105,7 +105,7 @@ const VideoPage = ({match, courses, addCourses}) => {
         const wantedVideoId = match.params.videoId;
         const wantedCourse = courses.find(c => c.id === wantedCourseId);
         if (!wantedCourse) {
-            API.graphql(graphqlOperation(getCourse, {id: wantedCourseId}))
+            API.graphql({...graphqlOperation(getCourse, {id: wantedCourseId}), authMode: "API_KEY"})
                 .then(response => {
                     addCourses([response.data.getCourse]);
                     loadVideoFromCourse(wantedVideoId, response.data.getCourse);
@@ -132,10 +132,12 @@ const VideoPage = ({match, courses, addCourses}) => {
     return videoNotFound
         ? (<Alert variant="error"><h4>Sorry we are unable to find the video you are looking for.</h4></Alert>)
         : (<>
-            <Alert variant="warning">
-                <h4>Admin Zone!</h4>
-                <Form.Check checked={edit} onChange={toggleEdit} label="Edit Mode"/>
-            </Alert>
+            {user && user.isAdmin() &&
+                <Alert variant="warning">
+                    <h4>Admin Zone!</h4>
+                    <Form.Check checked={edit} onChange={toggleEdit} label="Edit Mode"/>
+                </Alert>
+            }
             <Row className="justify-content-center">
                 <Col>
                     {!edit

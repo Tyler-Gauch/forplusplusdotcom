@@ -4,9 +4,13 @@ import { API, graphqlOperation } from 'aws-amplify';
 import { createCourse } from '../../graphql/mutations';
 import {DEFAULT_VIDEO} from '../data/Courses';
 import { encodeTitleToId } from '../util/encoders';
+import { useHistory } from 'react-router-dom';
+import { buildCourseUrl } from '../util/url-builders';
 
 
 const NewCourseModal = () => {
+
+    const history = useHistory();
 
     const [show, setShow] = useState(false);
     const [validated, setValidated] = useState(false);
@@ -45,12 +49,12 @@ const NewCourseModal = () => {
             adminOnly: true
       };
 
-      await API.graphql(graphqlOperation(createCourse, {input: input}))
-        .then(e => {
-            console.log(e);
+      API.graphql(graphqlOperation(createCourse, {input: input}))
+        .then(() => {
+            history.push(buildCourseUrl(newCourseId));
         })
         .catch(e => {
-            console.error(setError(e.error));
+            setError("Error adding course: " + JSON.stringify(e));
         });
     };
 
@@ -66,7 +70,7 @@ const NewCourseModal = () => {
             </Modal.Header>
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Modal.Body>
-                        {error && <Alert variant="error">{error}</Alert>}
+                        {error && <Alert variant="danger">{error}</Alert>}
                         <Form.Group controlId="formTitle">
                             <Form.Label>Title</Form.Label>
                             <Form.Control required type="text" placeholder="Enter Course Title" onChange={handleNewTitle} />
