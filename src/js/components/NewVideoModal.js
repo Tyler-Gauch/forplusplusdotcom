@@ -1,32 +1,33 @@
 import React, {useState} from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { API, graphqlOperation } from 'aws-amplify';
-import { createCourse } from '../../graphql/mutations';
+import { updateCourse } from '../../graphql/mutations';
 import { encodeTitleToId } from '../util/encoders';
 import { useHistory } from 'react-router-dom';
-import { buildCourseUrl } from '../util/url-builders';
 
 
-const NewCourseModal = () => {
+const NewVideoModal = ({onSuccess}) => {
 
     const history = useHistory();
 
     const [show, setShow] = useState(false);
     const [validated, setValidated] = useState(false);
-    const [newCourseTitle, setNewCourseTitle] = useState("");
-    const [newCourseShortDesc, setNewCourseShortDesc] = useState("");
-    const [newCourseDesc, setNewCourseDesc] = useState("");
-    const [newCourseId, setNewCourseId] = useState("");
+    const [newVideoTitle, setNewVideoTitle] = useState("");
+    const [newVideoUrl, setNewVideoUrl] = useState("");
+    const [newThumbnailUrl, setNewThumbnailUrl] = useState("");
+    const [newVideoDesc, setNewVideoDesc] = useState("");
+    const [newVideoId, setNewVideoId] = useState("");
     const [error, setError] = useState(null);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const handleNewTitle = (event) => {
-        setNewCourseId(encodeTitleToId(event.target.value));
-        setNewCourseTitle(event.target.value);
+        setNewVideoId(encodeTitleToId(event.target.value));
+        setNewVideoTitle(event.target.value);
     };
-    const handleNewShortDesc = (event) => setNewCourseShortDesc(event.target.value);
-    const handleNewDesc = (event) => setNewCourseDesc(event.target.value);
+    const handleNewVideoUrl = (event) => setNewVideoUrl(event.target.value);
+    const handleNewDesc = (event) => setNewVideoDesc(event.target.value);
+    const handleNewThumbnailUrl = (event) => setNewThumbnailUrl(event.target.value);
 
     const handleSubmit = async (event) => {
       const form = event.currentTarget;
@@ -40,49 +41,47 @@ const NewCourseModal = () => {
       setValidated(true);
 
       const input = {
-            id: newCourseId,
-            title: newCourseTitle,
-            shortDescription: newCourseShortDesc,
-            description: newCourseDesc,
-            videos: [],
+            id: newVideoId,
+            title: newVideoTitle,
+            description: newVideoDesc,
+            thumbnailUrl: newThumbnailUrl,
+            videoSrc: newVideoUrl,
             adminOnly: true
       };
 
-      API.graphql(graphqlOperation(createCourse, {input: input}))
-        .then(() => {
-            history.push(buildCourseUrl(newCourseId));
-        })
-        .catch(e => {
-            setError("Error adding course: " + JSON.stringify(e));
-        });
+      handleClose();
+      onSuccess(input);
     };
 
     return (
         <>
             <Button variant="primary" onClick={handleShow}>
-                Add new course
+                Add new video
             </Button>
 
             <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Create new course</Modal.Title>
+                <Modal.Title>Create new video</Modal.Title>
             </Modal.Header>
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <Modal.Body>
                         {error && <Alert variant="danger">{error}</Alert>}
                         <Form.Group controlId="formTitle">
                             <Form.Label>Title</Form.Label>
-                            <Form.Control required type="text" placeholder="Enter Course Title" onChange={handleNewTitle} />
+                            <Form.Control required type="text" placeholder="Enter Video Title" onChange={handleNewTitle} />
                         </Form.Group>
-                        <Form.Group controlId="formShortDescription">
-                            <Form.Label>Short Description</Form.Label>
-                            <Form.Control required type="text" placeholder="Enter Short Description" onChange={handleNewShortDesc}/>
+                        <Form.Group controlId="formVideoUrl">
+                            <Form.Label>Video Url</Form.Label>
+                            <Form.Control required type="text" placeholder="Enter Video Url" onChange={handleNewVideoUrl}/>
+                        </Form.Group>
+                        <Form.Group controlId="formThumbnailUrl">
+                            <Form.Label>Thumbnail Url</Form.Label>
+                            <Form.Control required type="text" placeholder="Enter Thumbnail Url" onChange={handleNewThumbnailUrl}/>
                         </Form.Group>
                         <Form.Group controlId="formDescription">
                             <Form.Label>Description</Form.Label>
                             <Form.Control required as="textarea" rows={3} onChange={handleNewDesc} />
                         </Form.Group>
-                    
                 </Modal.Body>
 
                 <Modal.Footer>
@@ -95,4 +94,4 @@ const NewCourseModal = () => {
     );
 };
 
-export default NewCourseModal;
+export default NewVideoModal;

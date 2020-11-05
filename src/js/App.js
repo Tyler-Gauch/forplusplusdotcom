@@ -1,17 +1,16 @@
-import React, {Suspense, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import '../css/components/App.scss';
 import {Container} from "react-bootstrap";
 import NavigationBar from './components/NavigationBar';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-import CoursePage from './components/CoursePage';
-import {COURSES} from '../js/data/Courses';
+import CoursePage from './components/CoursePage/CoursePage';
 import VideoPage from './components/VideoPage';
 import CoursesPage from './components/CoursesPage';
 import Amplify, {Auth, Hub, API, graphqlOperation} from 'aws-amplify';
 import config from '../aws-exports';
 import { IS_LOCALHOST } from './Constants';
 import {connect} from 'react-redux';
-import {setUser, addCourses} from './store/actions.js';
+import {setUser, addOrUpdateCourses} from './store/actions.js';
 import {listCourses} from '../graphql/queries';
 
 const initializeAuth = () => {
@@ -41,13 +40,12 @@ initializeAuth();
 
 const mapStateToProps = state => {
   const user = state.user || {};
-  const courses = state.courses || [];
-  return {user, courses};
+  return {user};
 };
 
 // this needs to be a component as useEffect
 // causes too many calls of Auth.currentAuthenticatedUser
-const App = ({setUser, addCourses, user, courses}) => {
+const App = ({setUser, addOrUpdateCourses, user}) => {
   const getUser = () => {
     return Auth.currentAuthenticatedUser()
       .then(userData => userData)
@@ -76,9 +74,9 @@ const App = ({setUser, addCourses, user, courses}) => {
     getUser().then(userData => setUser(userData));
 
     API.graphql({...graphqlOperation(listCourses), authMode: 'API_KEY'}).then(response => {
-        addCourses(response.data.listCourses.items);
+      addOrUpdateCourses(response.data.listCourses.items);
     });
-  }, [addCourses, setUser]);
+  }, [addOrUpdateCourses, setUser]);
 
   return (
     <Router>
@@ -103,5 +101,5 @@ const App = ({setUser, addCourses, user, courses}) => {
 
 export default connect(
   mapStateToProps,
-  {setUser, addCourses}
+  {setUser, addOrUpdateCourses}
 )(App);

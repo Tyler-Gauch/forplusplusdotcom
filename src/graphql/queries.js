@@ -11,16 +11,18 @@ export const getCourse = /* GraphQL */ `
       videos {
         id
         title
+        thumbnailUrl
         videoSrc
         previousVideo {
-          link
+          otherVideoId
           text
         }
         nextVideo {
-          link
+          otherVideoId
           text
         }
         description
+        adminOnly
       }
       adminOnly
       createdAt
@@ -43,8 +45,10 @@ export const listCourses = /* GraphQL */ `
         videos {
           id
           title
+          thumbnailUrl
           videoSrc
           description
+          adminOnly
         }
         adminOnly
         createdAt

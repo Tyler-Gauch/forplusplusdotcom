@@ -6,14 +6,16 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { connect } from 'react-redux';
+import { faCogs } from "@fortawesome/free-solid-svg-icons";
+import { setAdminMode } from "../store/actions";
 
 const mapStateToProps = (state) => {
     const user = state.user;
-
-    return {user};
+    const adminMode = state.adminMode
+    return {user, adminMode};
 };
 
-const NavigationBar = ({user, logoutCallback, loginCallback}) => {
+const NavigationBar = ({user, logoutCallback, loginCallback, adminMode, setAdminMode}) => {
 
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
@@ -48,6 +50,14 @@ const NavigationBar = ({user, logoutCallback, loginCallback}) => {
                     <NavDropdown.Divider />
                   </>
                 }
+                {user.isAdmin() &&
+                  <>
+                    <NavDropdown.Item href="#" onClick={() => setAdminMode(!adminMode)}>
+                      Turn {adminMode ? "off" : "on"} Admin Mode <FontAwesomeIcon icon={faCogs} />
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                  </>
+                }
                 <NavDropdown.Item onClick={logoutCallback}>Logout</NavDropdown.Item>
               </NavDropdown>
             :
@@ -65,4 +75,4 @@ NavigationBar.propTypes = {
   userAttributes: PropTypes.object
 };
 
-export default connect(mapStateToProps)(NavigationBar);
+export default connect(mapStateToProps, {setAdminMode})(NavigationBar);

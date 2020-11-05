@@ -9,7 +9,7 @@ import { API, graphqlOperation } from 'aws-amplify';
 import { updateCourse } from '../../graphql/mutations';
 import { connect } from 'react-redux';
 import { getCourse } from '../../graphql/queries';
-import { addCourses } from '../store/actions';
+import { addOrUpdateCourses } from '../store/actions';
 import { encodeTitleToId } from '../util/encoders';
 import { useHistory } from 'react-router-dom';
 import { buildVideoUrl } from '../util/url-builders';
@@ -23,7 +23,7 @@ const mapStateToProps = state => {
 
 const errorMessage = "";
 
-const VideoPage = ({match, courses, addCourses, user}) => {
+const VideoPage = ({match, courses, addOrUpdateCourses, user}) => {
 
     const [course, setCourse] = useState(null);
     const [video, setVideo] = useState(null);
@@ -38,7 +38,7 @@ const VideoPage = ({match, courses, addCourses, user}) => {
     const toggleEdit = () => setEdit(!edit);
 
     const handleUpdateTitle = () => {
-        if (newTitle === "" || newTitle === video.title) {
+        if (!newTitle || newTitle === video.title) {
             return;
         }
 
@@ -54,7 +54,7 @@ const VideoPage = ({match, courses, addCourses, user}) => {
     };
 
     const handleUpdateDescription = () => {
-        if (newDescription === "" || newDescription === video.description) {
+        if (!newDescription || newDescription === video.description) {
             return;
         }
 
@@ -71,7 +71,7 @@ const VideoPage = ({match, courses, addCourses, user}) => {
 
         API.graphql(graphqlOperation(updateCourse, {input: newCourse}))
             .then((response) => {
-                addCourses([response.data.getCourse]);
+                addOrUpdateCourses([response.data.getCourse]);
                 if (refreshPage) {
                     history.push(buildVideoUrl(course.id, newVideo.id));
                 }
@@ -107,7 +107,7 @@ const VideoPage = ({match, courses, addCourses, user}) => {
         if (!wantedCourse) {
             API.graphql({...graphqlOperation(getCourse, {id: wantedCourseId}), authMode: "API_KEY"})
                 .then(response => {
-                    addCourses([response.data.getCourse]);
+                    addOrUpdateCourses([response.data.getCourse]);
                     loadVideoFromCourse(wantedVideoId, response.data.getCourse);
                 })
                 .catch(error => {
@@ -119,7 +119,7 @@ const VideoPage = ({match, courses, addCourses, user}) => {
         }
 
         loadVideoFromCourse(wantedVideoId, wantedCourse);        
-    }, [match, courses, addCourses]);
+    }, [match, courses, addOrUpdateCourses]);
 
     if (!videoNotFound && !video) {
         return (
@@ -162,12 +162,12 @@ const VideoPage = ({match, courses, addCourses, user}) => {
                             <Row>
                                 {video.previousVideo &&
                                     <Col lg={6}>
-                                        <Link to={video.previousVideo.link}>Previous: {video.previousVideo.text}</Link>
+                                        <Link to={buildVideoUrl(course.id, video.previousVideo.otherVideoId)}>Previous: {video.previousVideo.text}</Link>
                                     </Col>
                                 }
                                 {video.nextVideo &&
                                     <Col lg={(video.previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
-                                        <Link to={video.nextVideo.link}>Next: {video.nextVideo.text}</Link>
+                                        <Link to={buildVideoUrl(course.id, video.nextVideo.otherVideoId)}>Next: {video.nextVideo.text}</Link>
                                     </Col>
                                 }
                             </Row>
@@ -200,4 +200,4 @@ const VideoPage = ({match, courses, addCourses, user}) => {
         </>)
 };
 
-export default connect(mapStateToProps, {addCourses})(VideoPage);
+export default connect(mapStateToProps, {addOrUpdateCourses})(VideoPage);

@@ -11,16 +11,18 @@ export const onCreateCourse = /* GraphQL */ `
       videos {
         id
         title
+        thumbnailUrl
         videoSrc
         previousVideo {
-          link
+          otherVideoId
           text
         }
         nextVideo {
-          link
+          otherVideoId
           text
         }
         description
+        adminOnly
       }
       adminOnly
       createdAt
@@ -38,16 +40,18 @@ export const onUpdateCourse = /* GraphQL */ `
       videos {
         id
         title
+        thumbnailUrl
         videoSrc
         previousVideo {
-          link
+          otherVideoId
           text
         }
         nextVideo {
-          link
+          otherVideoId
           text
         }
         description
+        adminOnly
       }
       adminOnly
       createdAt
@@ -65,16 +69,18 @@ export const onDeleteCourse = /* GraphQL */ `
       videos {
         id
         title
+        thumbnailUrl
         videoSrc
         previousVideo {
-          link
+          otherVideoId
           text
         }
         nextVideo {
-          link
+          otherVideoId
           text
         }
         description
+        adminOnly
       }
       adminOnly
       createdAt

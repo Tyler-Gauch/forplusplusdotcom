@@ -27,4 +27,8 @@ class User {
 }
 
 
+export const verifyUserIsAdmin = user => {
+    return user && user.isAdmin();
+};
+
 export default User;

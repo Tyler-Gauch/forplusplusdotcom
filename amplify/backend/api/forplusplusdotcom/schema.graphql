@@ -18,13 +18,15 @@ type Course
 type Video {
   id: ID!
   title: String!
+  thumbnailUrl: String!
   videoSrc: String!
   previousVideo: VideoLink
   nextVideo: VideoLink
   description: String!
+  adminOnly: Boolean!
 }
 
 type VideoLink {
-  link: String!
+  otherVideoId: String!
   text: String!
 }
