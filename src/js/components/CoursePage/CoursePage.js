@@ -51,7 +51,7 @@ const CoursePage = ({match, courses, user, adminMode}) => {
                 <EditableCoursePage course={course} />
             }
             {canShowCoursePage && !canShowAdminMode &&
-                <NonEditableCoursePage course={course} />
+                <NonEditableCoursePage course={course} user={user} />
             }
         </>
     );

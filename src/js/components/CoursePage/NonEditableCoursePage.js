@@ -1,10 +1,9 @@
 import React from 'react';
 import { Jumbotron, Row, Col } from 'react-bootstrap';
+import { verifyUserIsAdmin } from '../../util/user';
 import VideoPreview from '../VideoPreview';
 
-
-
-const NonEditableCoursePage = ({course}) => {
+const NonEditableCoursePage = ({course, user}) => {
 
     return (
         <>
@@ -18,11 +17,16 @@ const NonEditableCoursePage = ({course}) => {
             </Row>
 
             <Row gutter>
-                {course.videos.map(video => (
-                    <Col lg={4}>
+                {course.videos.map(video => {
+                    if ((course.adminOnly || video.adminOnly) && !verifyUserIsAdmin(user)) {
+                        return;
+                    }
+                
+                    return (<Col lg={3}>
                         <VideoPreview key={video.id} courseId={course.id} video={video} />
-                    </Col>
-                ))}
+                        </Col>
+                    );
+                })}
             </Row>
         </>
     );

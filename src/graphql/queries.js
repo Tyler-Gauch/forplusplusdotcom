@@ -49,6 +49,14 @@ export const listCourses = /* GraphQL */ `
           videoSrc
           description
           adminOnly
+          nextVideo {
+            otherVideoId
+            text
+          }
+          previousVideo {
+            otherVideoId
+            text
+          }
         }
         adminOnly
         createdAt

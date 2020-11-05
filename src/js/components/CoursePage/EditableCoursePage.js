@@ -193,7 +193,7 @@ const EditableCoursePage = ({course, addOrUpdateCourses, removeCourses}) => {
             </Row>
             <Row>
                 {course.videos.map(video => (
-                    <Col lg={4}>
+                    <Col lg={3}>
                         <VideoPreview key={video.id} courseId={course.id} video={video} onAdminChange={handleVideoChange}/>
                     </Col>
                 ))}

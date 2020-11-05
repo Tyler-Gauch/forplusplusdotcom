@@ -14,6 +14,7 @@ import { encodeTitleToId } from '../util/encoders';
 import { useHistory } from 'react-router-dom';
 import { buildVideoUrl } from '../util/url-builders';
 import Markdown from './Markdown';
+import NotFound from './errors/NotFound';
 
 const mapStateToProps = state => {
     const courses = state.courses || [];
@@ -130,7 +131,7 @@ const VideoPage = ({match, courses, addOrUpdateCourses, user}) => {
     }
 
     return videoNotFound
-        ? (<Alert variant="error"><h4>Sorry we are unable to find the video you are looking for.</h4></Alert>)
+        ? (<NotFound />)
         : (<>
             {user && user.isAdmin() &&
                 <Alert variant="warning">
