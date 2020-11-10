@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../css/components/App.scss';
 import {Container} from "react-bootstrap";
 import NavigationBar from './components/NavigationBar';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-import CoursePage from './components/CoursePage/CoursePage';
-import VideoPage from './components/VideoPage';
+import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
+import CoursePage from './components/coursePage/CoursePage';
+import VideoPage from './components/videoPage/VideoPage';
 import CoursesPage from './components/CoursesPage';
 import Amplify, {Auth, Hub, API, graphqlOperation} from 'aws-amplify';
 import config from '../aws-exports';
@@ -40,23 +40,27 @@ initializeAuth();
 
 const mapStateToProps = state => {
   const user = state.user || {};
-  return {user};
+  const adminMode = state.adminMode || false;
+  return {user, adminMode};
 };
 
 // this needs to be a component as useEffect
 // causes too many calls of Auth.currentAuthenticatedUser
-const App = ({setUser, addOrUpdateCourses, user}) => {
+const App = ({setUser, addOrUpdateCourses, user, adminMode}) => {
+
   const getUser = () => {
     return Auth.currentAuthenticatedUser()
       .then(userData => userData)
       .catch(() => console.log('Not signed in'));
   }
 
+  const [redirectUri, setRedirectUri] = useState(null);
+
   useEffect(() => {
     Hub.listen("auth", ({ payload: { event, data } }) => {
       switch (event) {
         case "signIn":
-        case 'cognitoHostedUi':
+        case 'cognitoHostedUI':
           getUser().then(userData => setUser(userData));
           break;
         case "signOut":
@@ -66,7 +70,12 @@ const App = ({setUser, addOrUpdateCourses, user}) => {
         case 'cognitoHostedUI_failure':
           console.log('Sign in failure', data);
           break;
+        case 'customOAuthState':
+          const customState = JSON.parse(data);
+          setRedirectUri(customState.redirectTo.pathname);
+          break;
         default:
+          console.log(event);
           break;
       }
     });
@@ -80,12 +89,13 @@ const App = ({setUser, addOrUpdateCourses, user}) => {
 
   return (
     <Router>
+          {redirectUri && <Redirect to={redirectUri}/>}
           <NavigationBar
             userAttributes={user && user.attributes ? user.attributes : null}
-            loginCallback={() => Auth.federatedSignIn({provider: 'Google'})}
+            loginCallback={(redirectTo) => Auth.federatedSignIn({provider: 'Google', customState: JSON.stringify({redirectTo})})}
             logoutCallback={() => Auth.signOut()}
           />
-          <Container id="content-wrapper">
+          <Container id="content-wrapper" fluid={adminMode}>
               <Switch>
                 <Route path="/course/:courseId/:videoId" component={VideoPage}/>
                 <Route path="/course/:courseId" component={CoursePage}/>

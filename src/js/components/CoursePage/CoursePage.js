@@ -7,7 +7,6 @@ import Unknown from '../errors/Unknown';
 import { verifyUserIsAdmin } from '../../util/user';
 import EditableCoursePage from './EditableCoursePage';
 import NonEditableCoursePage from './NonEditableCoursePage';
-import { useParams } from 'react-router-dom';
 
 const mapStateToProps = (state) => {
     const courses = state.courses || [];
@@ -25,6 +24,7 @@ const CoursePage = ({match, courses, user, adminMode}) => {
     const handleSetCourse = wantedCourse => {
         if (wantedCourse.adminOnly && !verifyUserIsAdmin(user)) {
             setNotFound(true);
+            return;
         }
 
         setNotFound(false);
@@ -36,7 +36,7 @@ const CoursePage = ({match, courses, user, adminMode}) => {
         const wantedId = match.params.courseId;
         loadWantedCourse(wantedId)
             .then(handleSetCourse)
-            .catch(setUnknownError(true));
+            .catch(setNotFound(true));
 
     }, [match, courses]);
 

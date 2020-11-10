@@ -92,6 +92,9 @@ export const appendVideo = (course, newVideo) => {
     return addVideoAfter(newCourse, lastVideoId, newVideo);
 }
 
+export const UNKNOWN_COURSE_REASON = "UNKNOWN_COURSE";
+export const UNKNOWN_VIDEO_REASON = "UNKNOWN_VIDEO";
+
 export const loadWantedCourse = (courseId) => {
     return new Promise((resolve, reject) => {
         const state = store.getState();
@@ -106,7 +109,23 @@ export const loadWantedCourse = (courseId) => {
                     addOrUpdateCourses([response.data.getCourse]);
                     resolve(response.data.getCourse);
                 })
-                .catch(reject);
+                .catch(response => {
+                    reject({reason: UNKNOWN_COURSE_REASON, response});
+                });
         }
+    });
+}
+
+export const loadWantedVideo = (courseId, videoId) => {
+    return new Promise((resolve, reject) => {
+        loadWantedCourse(courseId)
+            .then(wantedCourse => {
+                const wantedVideo = wantedCourse.videos.find(v => v.id === videoId);
+                if (!wantedVideo) {
+                    reject({reason: UNKNOWN_VIDEO_REASON, course: wantedCourse});
+                }
+
+                resolve({course: wantedCourse, video: wantedVideo});
+            }).catch(reject);
     });
 }

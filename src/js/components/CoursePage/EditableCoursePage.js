@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Button, Col, FormControl, InputGroup, Row } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { API, graphqlOperation } from 'aws-amplify';
 import { connect } from 'react-redux';
 import { addOrUpdateCourses, removeCourses } from '../../store/actions';
@@ -42,6 +42,7 @@ const EditableCoursePage = ({course, addOrUpdateCourses, removeCourses}) => {
 
     const handleUpdateTitle = () => {
         setUpdateCourseSuccess(null);
+        setUpdateCourseError(null);
         if (!newTitle) {
             setUpdateCourseError("Title cannot be empty.");
             return;

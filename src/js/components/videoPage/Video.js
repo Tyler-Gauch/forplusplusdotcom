@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../../css/components/Video.scss'
+import '../../../css/components/Video.scss'
 
 const Video = (props) => (
     <div className="Video-container">

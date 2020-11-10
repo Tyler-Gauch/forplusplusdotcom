@@ -5,14 +5,16 @@ import { BRAND_NAME } from '../Constants';
 import { Link } from 'react-router-dom';
 import NewCourseModal from './NewCourseModal';
 import {connect} from 'react-redux';
+import { verifyUserIsAdmin } from '../util/user';
 
 const mapStateToProps = state => {
     const courses = state.courses || [];
     const user = state.user || null;
-    return {courses, user};
+    const adminMode = state.adminMode || false;
+    return {courses, user, adminMode};
   };
 
-const CoursesPage = ({courses, user}) => {
+const CoursesPage = ({courses, user, adminMode}) => {
     return (
         <>
             <Jumbotron>
@@ -26,7 +28,7 @@ const CoursesPage = ({courses, user}) => {
                     Seeing how there aren't any coding videos yet please let us know what you would like to see here and enjoy this call of duty content!
                 </p>
             </Jumbotron>
-            {user && user.isAdmin() &&
+            {adminMode && verifyUserIsAdmin(user) &&
                 <Row>
                     <Col>
                         <Alert variant="warning">
@@ -44,9 +46,11 @@ const CoursesPage = ({courses, user}) => {
 
                     return (
                         <Row key={course.id}>
-                            <CoursePreview
-                                {...course}
-                            />
+                            <Col>
+                                <CoursePreview
+                                    {...course}
+                                />
+                            </Col>
                         </Row>
                 )})}
         </>

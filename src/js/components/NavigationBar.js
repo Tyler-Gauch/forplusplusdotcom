@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import PropTypes from "prop-types";
 import { Nav, NavDropdown } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { connect } from 'react-redux';
@@ -16,6 +16,8 @@ const mapStateToProps = (state) => {
 };
 
 const NavigationBar = ({user, logoutCallback, loginCallback, adminMode, setAdminMode}) => {
+
+  const currentLocation = useLocation();
 
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
@@ -62,7 +64,7 @@ const NavigationBar = ({user, logoutCallback, loginCallback, adminMode, setAdmin
               </NavDropdown>
             :
               <Nav.Item>
-                <Nav.Link onClick={loginCallback}>Login <FontAwesomeIcon icon={faYoutube} /> </Nav.Link>
+                <Nav.Link onClick={() => loginCallback(currentLocation)}>Login <FontAwesomeIcon icon={faYoutube} /> </Nav.Link>
               </Nav.Item>
           }
         </Nav>
