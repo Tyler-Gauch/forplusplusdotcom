@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Video from './Video';
-import {Row, Col, Alert, Form, FormControl, InputGroup, Button} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import '../../../css/components/VideoPage.scss';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { addOrUpdateCourses } from '../../store/actions';
-import { buildVideoUrl } from '../../util/url-builders';
-import Markdown from '../Markdown';
 import NotFound from '../errors/NotFound';
 import { loadWantedVideo } from '../../util/course-helpers';
 import { verifyUserIsAdmin } from '../../util/user';

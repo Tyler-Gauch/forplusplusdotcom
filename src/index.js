@@ -7,6 +7,8 @@ import { setDefaultBreakpoints, BreakpointProvider } from 'react-socks';
 import {BREAKPOINTS} from './js/Constants';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from './js/store/store.js';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 setDefaultBreakpoints(BREAKPOINTS);
 
@@ -14,7 +16,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
     <BreakpointProvider>
+    <DndProvider backend={HTML5Backend}>
       <App />
+    </DndProvider>
     </BreakpointProvider>
     </ReduxProvider>
   </React.StrictMode>,

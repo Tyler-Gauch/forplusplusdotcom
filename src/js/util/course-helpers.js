@@ -2,6 +2,7 @@ import store from '../store/store';
 import { API, graphqlOperation } from 'aws-amplify';
 import { getCourse } from '../../graphql/queries';
 import { addOrUpdateCourses } from '../store/actions';
+import { indexOfFromProperty } from './array-helpers';
 
 export const addVideoAfter = (course, afterVideoId, newVideo) => {
     const newCourse = {...course};
@@ -50,7 +51,6 @@ export const addVideoAfter = (course, afterVideoId, newVideo) => {
 }
 
 export const removeVideo = (course, videoId) => {
-    debugger;
     const newCourse = {...course};
 
     if (!newCourse.videos || newCourse.videos.length === 0) {
@@ -90,6 +90,131 @@ export const appendVideo = (course, newVideo) => {
 
     const lastVideoId = newCourse.videos[newCourse.videos.length - 1].id;
     return addVideoAfter(newCourse, lastVideoId, newVideo);
+}
+
+export const replaceVideo = (course, videoId, updatedVideo) => {
+    const newCourse = {...course};
+
+    if (!newCourse || !newCourse.videos) {
+        console.error("Course is null or doesn't have any videos", course);
+        return null;
+    }
+
+    const currentVideoIndex = indexOfFromProperty(newCourse.videos, "id", videoId);
+    if (currentVideoIndex === -1) {
+        console.error("Unable to find current video id in list");
+        return null;
+    }
+
+    const beforeVideos = newCourse.videos.slice(0, currentVideoIndex);
+    const afterVideos = currentVideoIndex !== newCourse.videos.length - 1 ? newCourse.videos.slice(currentVideoIndex+1) : [];
+
+    newCourse.videos = beforeVideos.concat(updatedVideo).concat(afterVideos);
+
+    return newCourse;
+}
+
+export const swapVideos = (course, videoId, otherVideoId) => {
+    const video = course.videos.find(v => v.id === videoId);
+    if (!video) {
+        console.error("Unable to find video for id", videoId);
+        return null;
+    }
+
+    const otherVideo = course.videos.find(v => v.id === otherVideoId);
+
+    if (!otherVideo) {
+        console.error("Unable to find other video for id", otherVideoId);
+    }
+
+    const doSwapLeftToRight = video.nextVideo?.otherVideoId === otherVideoId;
+
+    if (doSwapLeftToRight) {
+        return swapLeftToRight(course, video, otherVideo);
+    } else {
+        return swapRightToLeft(course, video, otherVideo);
+    }
+}
+
+const swapRightToLeft = (course, video, otherVideo) => {
+    let nextVideo = null;
+    let previousVideo = null;
+
+    video.previousVideo = otherVideo.previousVideo;
+    otherVideo.previousVideo = createVideoLinkFromVideo(video);
+    otherVideo.nextVideo = video.nextVideo;
+    video.nextVideo = createVideoLinkFromVideo(otherVideo);
+    if (video.previousVideo) {
+        previousVideo = course.videos.find(v => v.id === video.previousVideo.otherVideoId);
+        previousVideo.nextVideo = createVideoLinkFromVideo(video);
+    }
+    if (otherVideo.nextVideo) {
+        nextVideo = course.videos.find(v => v.id === otherVideo.nextVideo.otherVideoId);
+        nextVideo.previousVideo = createVideoLinkFromVideo(otherVideo);
+    }
+
+    const numberInLeftVideos = indexOfFromProperty(course.videos, 'id', previousVideo ? previousVideo.id : otherVideo.id);
+    const rightVideoStartingIndex = indexOfFromProperty(course.videos, 'id', nextVideo ? nextVideo.id : video.id)+1;
+    const leftVideos = course.videos.slice(0, numberInLeftVideos);
+    const rightVideos = course.videos.slice(rightVideoStartingIndex);
+
+    const videos = [
+        ...leftVideos,
+        ...(previousVideo ? [previousVideo] : []),
+        video,
+        otherVideo,
+        ...(nextVideo ? [nextVideo] : []),
+        ...rightVideos
+    ]
+
+    return {
+        ...course,
+        videos: videos
+    };
+}
+
+const swapLeftToRight = (course, video, otherVideo) => {
+    let nextVideo = null;
+    let previousVideo = null;
+
+    video.nextVideo = otherVideo.nextVideo;
+    otherVideo.nextVideo = createVideoLinkFromVideo(video);
+    otherVideo.previousVideo = video.previousVideo;
+    video.previousVideo = createVideoLinkFromVideo(otherVideo);
+    if (video.nextVideo) {
+        nextVideo = course.videos.find(v => v.id === video.nextVideo.otherVideoId);
+        nextVideo.previousVideo = createVideoLinkFromVideo(video);
+    }
+    if (otherVideo.previousVideo) {
+        previousVideo = course.videos.find(v => v.id === otherVideo.previousVideo.otherVideoId);
+        previousVideo.nextVideo = createVideoLinkFromVideo(otherVideo);
+    }
+   
+    const numberInLeftVideos = indexOfFromProperty(course.videos, 'id', previousVideo ? previousVideo.id : video.id);
+    const rightVideoStartingIndex = indexOfFromProperty(course.videos, 'id', nextVideo ? nextVideo.id : otherVideo.id)+1;
+    const leftVideos = course.videos.slice(0, numberInLeftVideos);
+    const rightVideos = course.videos.slice(rightVideoStartingIndex);
+
+    const videos = [
+        ...leftVideos,
+        ...(previousVideo ? [previousVideo] : []),
+        otherVideo,
+        video,
+        ...(nextVideo ? [nextVideo] : []),
+        ...rightVideos
+    ]
+
+    return {
+        ...course,
+        videos: videos
+    };
+}
+
+export const createVideoLinkFromVideo = (video) => {
+    return {
+        otherVideoId: video.id,
+        text: video.title
+    }
 }
 
 export const UNKNOWN_COURSE_REASON = "UNKNOWN_COURSE";

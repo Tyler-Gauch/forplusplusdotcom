@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Video from './Video';
-import {Row, Col, Alert, FormControl, InputGroup, Button, Spinner, Container} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import {Row, Col, Alert, FormControl, InputGroup, Button, Spinner, Container, ButtonGroup, ButtonToolbar} from 'react-bootstrap';
+import { Link, Prompt } from 'react-router-dom';
 import '../../../css/components/VideoPage.scss';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { API, graphqlOperation } from 'aws-amplify';
 import { updateCourse } from '../../../graphql/mutations';
@@ -13,13 +13,15 @@ import { encodeTitleToId } from '../../util/encoders';
 import { useHistory } from 'react-router-dom';
 import { buildVideoUrl } from '../../util/url-builders';
 import Markdown from '../Markdown';
+import '../../../css/utils/utilities.scss';
+import { replaceVideo } from '../../util/course-helpers';
 
 const mapStateToProps = state => {
     const courses = state.courses || [];
     return {courses };
 };
 
-const VideoPage = ({course, video, addOrUpdateCourses}) => {
+const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
 
     const history = useHistory();
 
@@ -27,139 +29,152 @@ const VideoPage = ({course, video, addOrUpdateCourses}) => {
     const [updateVideoSuccess, setUpdateVideoSuccess] = useState(null);
     const [newTitle, setNewTitle] = useState(video.title);
     const [newDescription, setNewDescription] = useState(video.description);
+    const [newSrc, setNewSrc] = useState(video.videoSrc);
+    const [newAdminOnly, setNewAdminOnly] = useState(video.adminOnly);
 
-    const toggleAdminOnly = () => {
-        let response = false;
-        if (video.adminOnly) {
-            response = window.confirm("This video is currently only visible to admins. By confirming this you are making this video visible to all users. Are you sure you want to do this?");
-        } else {
-            response = window.confirm("This video is currently visible to everyone. By confirming this you will be removing the video from being visible to end users. Are you sure you want to do this?");
-        }
+    const toggleAdminOnly = () => setNewAdminOnly(!newAdminOnly);
 
-        if (response) {
-            handleUpdate({adminOnly: !video.adminOnly}, true);
-        }
-    };
-
-    const handleUpdateTitle = () => {
+    const handleUpdate = () => {
         setUpdateVideoSuccess(null);
         setUpdateVideoError(null);
-        if (!newTitle) {
-            setUpdateVideoError("Title cannot be empty");
+        if (!hasChangesToSave()) {
+            setUpdateVideoSuccess("No updates to save.");
             return;
-        } else if (newTitle === video.title) {
-            setUpdateVideoSuccess("Nothing to update");
-        }
-
-        const proceed = window.confirm("This will change the id and cause a page refresh are you sure you want to do this?");
-
-        if (!proceed) {
-            setNewTitle("");
+        } else if (!validateSave()) {
             return;
         }
 
-        const newId = encodeTitleToId(newTitle);
         const fieldsToUpdate = {
-            id: newId,
-            title: newTitle
+            id: encodeTitleToId(newTitle),
+            title: newTitle,
+            description: newDescription,
+            videoSrc: newSrc,
+            adminOnly: newAdminOnly
         };
 
-        handleUpdate(fieldsToUpdate, true);
-    };
-
-    const handleUpdateDescription = () => {
-        setUpdateVideoSuccess(null);
-        setUpdateVideoError(null);
-        if (!newDescription) {
-            setUpdateVideoError("Description cannot be empty");
-            return;
-        } else if (newDescription === video.description) {
-            setUpdateVideoSuccess("Nothing to update");
-            return;
-        }
-
-        handleUpdate({description: newDescription});
-    };
-
-    const handleUpdate = (fieldsToUpdate, refreshPage = false) => {
-        const {createdAt, updatedAt, ...wantedCourseValues} = course;
         const newVideo = {
             ...video,
             ...fieldsToUpdate
         };
 
-        const newCourse = {
-            ...wantedCourseValues,
-            videos: course.videos.filter(v => v.id !== video.id).concat([newVideo])
+        const updatedCourse = replaceVideo(course, video.id, newVideo);
+        
+        if (updatedCourse === null) {
+            setUpdateVideoError(["Failed to update video check console for more information"]);
+            return;
         }
+
+        const {createdAt, updatedAt, ...newCourse } = updatedCourse;
+        const refreshPage = video.id !== fieldsToUpdate.id;
 
         API.graphql(graphqlOperation(updateCourse, {input: newCourse}))
             .then((response) => {
-                addOrUpdateCourses([response.data.getCourse]);
+                addOrUpdateCourses([response.data.updateCourse]);
                 setUpdateVideoSuccess("Video updated successfully");
                 if (refreshPage) {
                     history.push(buildVideoUrl(course.id, newVideo.id));
                 }
             })
             .catch(response => {
-                setUpdateVideoError(JSON.stringify(response.errors));
+                setUpdateVideoError([JSON.stringify(response.errors)]);
             });
+    }
+
+    const hasChangesToSave = () => {
+        return newTitle !== video.title
+            || newDescription !== video.description
+            || newSrc !== video.videoSrc
+            || newAdminOnly !== video.adminOnly;
+    }
+
+    const validateSave = () => {
+        const errors = [];
+
+        if (!newTitle) {
+            errors.push("Title cannot be empty.");
+        }
+
+        if (!newDescription) {
+            errors.push("Description cannot be empty.");
+        }
+
+        if (!newSrc) {
+            errors.push("Video source cannot be empty.");
+        }
+
+        if (errors.length > 0) {
+            setUpdateVideoError(errors);
+            return false;
+        }
+
+        return true;
     }
 
     return (
         <>
-            <Container>
-                <Alert variant="warning">
+            <Prompt
+                when={hasChangesToSave}
+                message="You have unsaved changes, are you sure you want to leave?"
+            />
+            <Alert variant="warning">
+                <Row>
                     <h4>Admin Zone!</h4>
-                    {updateVideoError && <Row><Alert variant="danger">{updateVideoError}</Alert></Row>}
-                    {updateVideoSuccess && <Row><Alert variant="success">{updateVideoSuccess}</Alert></Row>}
-                </Alert>
-                
-                <Row className="justify-content-center">
-                    <Col>
-                        <InputGroup className="mb-3">
-                            <FormControl placeholder="Title" defaultValue={video.title} onChange={event => setNewTitle(event.target.value)} />    
-                            <InputGroup.Append>
-                                <Button variant="primary" onClick={handleUpdateTitle}><FontAwesomeIcon icon={faCheckCircle}/></Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                    </Col>
                 </Row>
                 <Row>
-                    <Col lg={10}>
-                        {updateVideoError && <Alert variant="error">{updateVideoError}</Alert>}
-                        <Row className="justify-content-center align-items-end shadow-sm p-3">
-                            <Col lg={{offset: 1, span: 7}}>
-                                <Video src={video.videoSrc} title={video.title}/>
-                            </Col>
-                            <Col lg={12}>
-                                <Row>
-                                    {video.previousVideo &&
-                                        <Col lg={6}>
-                                            <Link to={buildVideoUrl(course.id, video.previousVideo.otherVideoId)}>Previous: {video.previousVideo.text}</Link>
-                                        </Col>
-                                    }
-                                    {video.nextVideo &&
-                                        <Col lg={(video.previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
-                                            <Link to={buildVideoUrl(course.id, video.nextVideo.otherVideoId)}>Next: {video.nextVideo.text}</Link>
-                                        </Col>
-                                    }
-                                </Row>
-                            </Col>
-                        </Row>
-                    </Col>
-                    <Col lg={2} className="shadow-sm">
-                        This is where cool subscriber only content will be displayed!
-                    </Col>
+                    <ButtonToolbar>
+                        <ButtonGroup className="mr-2" aria-label="Admin buttons">
+                            <Button variant="primary" onClick={handleUpdate}>Save <FontAwesomeIcon icon={faSave}/></Button>
+                        </ButtonGroup>
+                        <ButtonGroup className="mr-2" aria-label="Admin buttons">
+                            <Button variant="primary" onClick={toggleAdminOnly}>
+                                {newAdminOnly ? "Publish Video" : "Remove Video"}
+                            </Button>
+                        </ButtonGroup>
+                    </ButtonToolbar>
                 </Row>
-            </Container>
+                {updateVideoError && <Row>
+                    <Alert variant="danger">
+                        <ul>{updateVideoError.map(error => (<li>{error}</li>))}</ul>
+                    </Alert>
+                </Row>}
+                {updateVideoSuccess && <Row><Alert variant="success">{updateVideoSuccess}</Alert></Row>}
+            </Alert>
+            
+            <Row className="justify-content-center">
+                <Col>
+                    <FormControl placeholder="Title" defaultValue={video.title} onChange={event => setNewTitle(event.target.value)} />    
+                </Col>
+            </Row>
+            <Row>
+                <Col lg={10}>
+                    <Row className="justify-content-center align-items-end shadow-sm p-3">
+                        <Col lg={{offset: 1, span: 7}}>
+                            <Video src={video.videoSrc} title={video.title}/>
+                        </Col>
+                        <Col lg={12}>
+                            <Row>
+                                {video.previousVideo &&
+                                    <Col lg={6}>
+                                        <Link to={buildVideoUrl(course.id, video.previousVideo.otherVideoId)}>Previous: {video.previousVideo.text}</Link>
+                                    </Col>
+                                }
+                                {video.nextVideo &&
+                                    <Col lg={(video.previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
+                                        <Link to={buildVideoUrl(course.id, video.nextVideo.otherVideoId)}>Next: {video.nextVideo.text}</Link>
+                                    </Col>
+                                }
+                            </Row>
+                        </Col>
+                    </Row>
+                </Col>
+                <Col lg={2} className="shadow-sm">
+                    This is where cool subscriber only content will be displayed!
+                </Col>
+            </Row>
             <Row className="shadow-sm pl-5 pr-5 pt-3 pb-3">
                 <Col lg={6}>
-                    <InputGroup className="mb-3">
-                        <FormControl as="textarea" aria-label="With textarea" defaultValue={video.description} onChange={event => setNewDescription(event.target.value)}/>
-                        <InputGroup.Append>
-                            <Button variant="primary" onClick={handleUpdateDescription}><FontAwesomeIcon icon={faCheckCircle}/></Button>
-                        </InputGroup.Append>
+                    <InputGroup className="fill-height">
+                        <FormControl as="textarea" aria-label="With textarea" defaultValue={video.description} onChange={event => setNewDescription(event.target.value)} />
                     </InputGroup>
                 </Col>
                 <Col lg={6}>
@@ -169,4 +184,4 @@ const VideoPage = ({course, video, addOrUpdateCourses}) => {
         </>)
 };
 
-export default connect(mapStateToProps, {addOrUpdateCourses})(VideoPage);
+export default connect(mapStateToProps, {addOrUpdateCourses})(EditableVideoPage);
