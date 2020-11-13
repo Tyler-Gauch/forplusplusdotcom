@@ -6,6 +6,21 @@ import '../../../css/components/VideoPage.scss';
 import { buildVideoUrl } from '../../util/url-builders';
 import Markdown from '../Markdown';
 
+const VideoLinkRow = ({course, video}) => (
+    <Row>
+        {video.previousVideo &&
+            <Col lg={6}>
+                <Link to={buildVideoUrl(course.id, video.previousVideo.otherVideoId)}>Previous: {video.previousVideo.text}</Link>
+            </Col>
+        }
+        {video.nextVideo &&
+            <Col lg={(video.previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
+                <Link to={buildVideoUrl(course.id, video.nextVideo.otherVideoId)}>Next: {video.nextVideo.text}</Link>
+            </Col>
+        }
+    </Row>
+);
+
 const NonEditableVideoPage = ({course, video}) => (
         <>
             <Row className="justify-content-center">
@@ -20,23 +35,15 @@ const NonEditableVideoPage = ({course, video}) => (
                             <Video src={video.videoSrc} title={video.title}/>
                         </Col>
                         <Col lg={12}>
-                            <Row>
-                                {video.previousVideo &&
-                                    <Col lg={6}>
-                                        <Link to={buildVideoUrl(course.id, video.previousVideo.otherVideoId)}>Previous: {video.previousVideo.text}</Link>
-                                    </Col>
-                                }
-                                {video.nextVideo &&
-                                    <Col lg={(video.previousVideo ? 6 : {offset: 6, span: 6})} className="text-right">
-                                        <Link to={buildVideoUrl(course.id, video.nextVideo.otherVideoId)}>Next: {video.nextVideo.text}</Link>
-                                    </Col>
-                                }
-                            </Row>
+                            <VideoLinkRow course={course} video={video} />
                         </Col>
                     </Row>
                     <Row className="shadow-sm pl-5 pr-5 pt-3 pb-3">
-                        <Col>
+                        <Col lg={12}>
                             <Markdown>{video.description}</Markdown>
+                        </Col>
+                        <Col lg={12}>
+                            <VideoLinkRow course={course} video={video} />
                         </Col>
                     </Row>
                 </Col>

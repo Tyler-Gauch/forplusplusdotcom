@@ -1,6 +1,97 @@
+$s-btn: 20px;
+$s-xs: 100px;
+$s-sm: 250px;
+$s-md: 500px;
+$s-lg: 750px;
+$s-xl: 1000px;
+
 .image {
     width: 75%;
     height: 75%;
-    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     margin-bottom: 10px;
+
+    &.shadow {
+        box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    &.center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    &.xs {
+        width: $s-xs;
+        height: $s-xs;
+    }
+
+    &.xs-w {
+        width: $s-xs;
+    }
+
+    &.xs-h {
+        height: $s-xs;
+    }
+
+    &.sm {
+        width: $s-sm;
+        height: $s-sm;
+    }
+
+    &.sm-w {
+        width: $s-sm;
+    }
+
+    &.sm-h {
+        height: $s-sm;
+    }
+
+    &.md {
+        width: $s-md;
+        height: $s-md;
+    }
+
+    &.md-w {
+        width: $s-md;
+    }
+
+    &.md-h {
+        height: $s-md;
+    }
+
+    &.lg {
+        width: $s-lg;
+        height: $s-lg;
+    }
+
+    &.lg-w {
+        width: $s-lg;
+    }
+
+    &.lg-h {
+        height: $s-lg;
+    }
+
+    &.xl {
+        width: $s-xl;
+        height: $s-xl;
+    }
+
+    &.xl-w {
+        width: $s-xl;
+    }
+
+    &.xl-h {
+        height: $s-xl;
+    }
+
+    &.button {
+        width: $s-btn;
+        box-shadow: 0 0 0 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        display: inline;
+    }
 }

@@ -13,7 +13,6 @@ const Markdown = ({children}) => {
         <ReactMarkdown
             plugins={plugins}
             renderers={renderers}
-            allowDangerousHtml
         >{children}</ReactMarkdown>
     );
 };
