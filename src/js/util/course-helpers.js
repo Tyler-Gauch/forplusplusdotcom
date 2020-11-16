@@ -254,3 +254,13 @@ export const loadWantedVideo = (courseId, videoId) => {
             }).catch(reject);
     });
 }
+
+export const isVideoAdminOnly = (course, videoId) => {
+    const video = course.videos.find(v => v.id === videoId);
+
+    if (!video) {
+        return false;
+    }
+
+    return video.adminOnly;
+}

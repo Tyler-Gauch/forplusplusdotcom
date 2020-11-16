@@ -26,9 +26,6 @@ const NavigationBar = ({user, logoutCallback, loginCallback, adminMode, setAdmin
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Item>
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
               <Nav.Link as={Link} to="/courses">Courses</Nav.Link>
           </Nav.Item>
           <Nav.Item>

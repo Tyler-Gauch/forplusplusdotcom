@@ -12,31 +12,31 @@ import { IS_LOCALHOST } from './Constants';
 import {connect} from 'react-redux';
 import {setUser, addOrUpdateCourses} from './store/actions.js';
 import {listCourses} from '../graphql/queries';
+import Home from './components/Home';
+import Contacts from './components/Contacts';
+import About from './components/About';
 
-const initializeAuth = () => {
-  // by default, say it's localhost
-  const oauth = {
-    scope: ['phone', 'email', 'profile', 'openid', 'aws.cognito.signin.user.admin'],
-    redirectSignIn: 'http://localhost:3000/',
-    redirectSignOut: 'http://localhost:3000/',
-    responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
-  };
+// by default, say it's localhost
+const oauth = {
+  scope: ['phone', 'email', 'profile', 'openid', 'aws.cognito.signin.user.admin'],
+  redirectSignIn: 'http://localhost:3000/',
+  redirectSignOut: 'http://localhost:3000/',
+  responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
+};
 
-  // if not, update the URLs
-  if (!IS_LOCALHOST) {
-    // TODO: Add these to auth config
-    oauth.redirectSignIn = 'https://www.forplusplus.com/';
-    oauth.redirectSignOut = 'https://www.forplusplus.com/';
-  }
-
-  // copy the constant config (aws-exports.js) because config is read only.
-  var configUpdate = config;
-  // update the configUpdate constant with the good URLs
-  configUpdate.oauth = {...config.oauth, ...oauth};
-  // Configure Amplify with configUpdate
-  Amplify.configure(configUpdate);
+// if not, update the URLs
+if (!IS_LOCALHOST) {
+  // TODO: Add these to auth config
+  oauth.redirectSignIn = 'https://www.forplusplus.com/';
+  oauth.redirectSignOut = 'https://www.forplusplus.com/';
 }
-initializeAuth();
+
+// copy the constant config (aws-exports.js) because config is read only.
+var configUpdate = config;
+// update the configUpdate constant with the good URLs
+configUpdate.oauth = {...config.oauth, ...oauth};
+// Configure Amplify with configUpdate
+Amplify.configure(configUpdate);
 
 const mapStateToProps = state => {
   const user = state.user || {};
@@ -100,9 +100,9 @@ const App = ({setUser, addOrUpdateCourses, user, adminMode}) => {
                 <Route path="/course/:courseId/:videoId" component={VideoPage}/>
                 <Route path="/course/:courseId" component={CoursePage}/>
                 <Route path="/courses"><CoursesPage /></Route>
-                <Route path="/about">ForPlusPlus is a platform that teaches you how to code in 5 minutes or less!</Route>
-                <Route path="/contact">Contact ForPlusPlus at forplusplus4@gmail.com</Route>
-                <Route path="/">Welcome to ForPlusPlus! More content soon!</Route>
+                <Route path="/about"><About /></Route>
+                <Route path="/contact"><Contacts /></Route>
+                <Route path="/"><Home /></Route>
               </Switch>
           </Container>
       </Router>

@@ -47,5 +47,11 @@
         }
       }
     }
+  },
+  "storage": {
+    "lessonImages": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

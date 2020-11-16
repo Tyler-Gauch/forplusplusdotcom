@@ -22,7 +22,7 @@ const VideoPage = ({match, user, adminMode}) => {
     const [unknownError, setUnknownError] = useState(false);
 
     const handleSetCouseAndVideo = ({course, video}) => {
-        if (course.adminOnly && !verifyUserIsAdmin(user)) {
+        if ((course.adminOnly || video.adminOnly) && !verifyUserIsAdmin(user)) {
             setNotFound(true);
             return;
         }

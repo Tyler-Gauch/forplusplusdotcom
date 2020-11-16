@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Storage } from 'aws-amplify';
 import Video from './Video';
-import {Row, Col, Alert, FormControl, InputGroup, Button, Spinner, Container, ButtonGroup, ButtonToolbar} from 'react-bootstrap';
+import {Row, Col, Alert, FormControl, InputGroup, Button, Spinner, Container, ButtonGroup, ButtonToolbar, Form} from 'react-bootstrap';
 import { Link, Prompt } from 'react-router-dom';
 import '../../../css/components/VideoPage.scss';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +16,7 @@ import { buildVideoUrl } from '../../util/url-builders';
 import Markdown from '../Markdown';
 import '../../../css/utils/utilities.scss';
 import { replaceVideo } from '../../util/course-helpers';
+import { v4 as uuid } from 'uuid';
 
 const mapStateToProps = state => {
     const courses = state.courses || [];
@@ -33,6 +35,33 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
     const [newAdminOnly, setNewAdminOnly] = useState(video.adminOnly);
 
     const toggleAdminOnly = () => setNewAdminOnly(!newAdminOnly);
+
+    const handlePaste = (e) => {
+        if (e.clipboardData && e.clipboardData.items) {
+
+            // Get the items from the clipboard
+            const items = e.clipboardData.items;
+  
+            // Loop through all items, looking for any kind of image
+            for (let i = 0; i < items.length; i++) {
+              if (items[i].type.indexOf('image') !== -1) {
+                // We need to represent the image as a file
+                const blob = items[i].getAsFile();
+                const fileName = `${uuid()}.png`;
+
+                Storage.put(fileName, blob)
+                    .then (result => {
+                        
+                        setNewDescription(`${newDescription}\n![:s3](${fileName})`);
+                    })
+                    .catch(err => console.log(err));
+  
+                // Prevent the image (or URL) from being pasted into the contenteditable element
+                e.preventDefault();
+              }
+            }
+          }
+    }
 
     const handleUpdate = () => {
         setUpdateVideoSuccess(null);
@@ -132,6 +161,10 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
                         </ButtonGroup>
                     </ButtonToolbar>
                 </Row>
+                <Form.Group>
+                    <Form.Label>Video Url</Form.Label>
+                    <Form.Control type="url" placeholder="video url" defaultValue={newSrc} onChange={(e) => setNewSrc(e.target.value)} />
+                </Form.Group>
                 {updateVideoError && <Row>
                     <Alert variant="danger">
                         <ul>{updateVideoError.map(error => (<li>{error}</li>))}</ul>
@@ -149,7 +182,7 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
                 <Col lg={10}>
                     <Row className="justify-content-center align-items-end shadow-sm p-3">
                         <Col lg={{offset: 1, span: 7}}>
-                            <Video src={video.videoSrc} title={video.title}/>
+                            <Video src={newSrc} title={video.title}/>
                         </Col>
                         <Col lg={12}>
                             <Row>
@@ -174,7 +207,7 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
             <Row className="shadow-sm pl-5 pr-5 pt-3 pb-3">
                 <Col lg={6}>
                     <InputGroup className="fill-height">
-                        <FormControl as="textarea" aria-label="With textarea" defaultValue={video.description} onChange={event => setNewDescription(event.target.value)} />
+                        <FormControl as="textarea" aria-label="With textarea" value={newDescription} onChange={event => setNewDescription(event.target.value)} onPaste={handlePaste} />
                     </InputGroup>
                 </Col>
                 <Col lg={6}>

@@ -1,6 +1,6 @@
 {
     "identityPoolName": "forplusplusdotcom0c8ab359_identitypool_0c8ab359",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "forplu0c8ab359",
     "userPoolName": "forplusplusdotcom0c8ab359_userpool_0c8ab359",
     "autoVerifiedAttributes": [

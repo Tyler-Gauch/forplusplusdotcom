@@ -1,8 +1,8 @@
 import React from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import ExpandableImage from './ExpandableImage';
+import {Storage} from 'aws-amplify';
 
 /**
  * alt format:
@@ -26,6 +26,8 @@ const imageRenderer = ({src, alt}) => {
     if (src) {
         const {altText, type} = parseAltText(alt);
 
+        console.log(src);
+
         switch (type) {
             case "button":
                 return (
@@ -35,9 +37,13 @@ const imageRenderer = ({src, alt}) => {
                          className={`image button`}
                     />
                 );
+            case "s3":
+                return (
+                    <ExpandableImage src={Storage.get(src, {level: "public"})} />
+                );
             default:
                 return (
-                    <ExpandableImage src={src} />
+                    <ExpandableImage src={new Promise((resolve) => resolve(src))} />
                 );
         }
 
