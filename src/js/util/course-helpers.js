@@ -109,6 +109,15 @@ export const replaceVideo = (course, videoId, updatedVideo) => {
     const beforeVideos = newCourse.videos.slice(0, currentVideoIndex);
     const afterVideos = currentVideoIndex !== newCourse.videos.length - 1 ? newCourse.videos.slice(currentVideoIndex+1) : [];
 
+    // update the previous and next video links
+    if (beforeVideos.length > 0) {
+        beforeVideos[beforeVideos.length -1].nextVideo = createVideoLinkFromVideo(updatedVideo);
+    }
+
+    if (afterVideos.length > 0) {
+        afterVideos[0].previousVideo.otherVideoId = createVideoLinkFromVideo(updatedVideo);
+    }
+
     newCourse.videos = beforeVideos.concat(updatedVideo).concat(afterVideos);
 
     return newCourse;

@@ -1,6 +1,60 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateQuiz = /* GraphQL */ `
+  subscription OnCreateQuiz {
+    onCreateQuiz {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateQuiz = /* GraphQL */ `
+  subscription OnUpdateQuiz {
+    onUpdateQuiz {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteQuiz = /* GraphQL */ `
+  subscription OnDeleteQuiz {
+    onDeleteQuiz {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
 export const onCreateCourse = /* GraphQL */ `
   subscription OnCreateCourse {
     onCreateCourse {

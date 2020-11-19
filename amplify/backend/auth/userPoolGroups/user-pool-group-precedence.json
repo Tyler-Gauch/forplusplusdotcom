@@ -6,5 +6,9 @@
     {
         "groupName": "subscribers",
         "precedence": 2
+    },
+    {
+        "groupName": "deleteme",
+        "precedence": 3
     }
 ]

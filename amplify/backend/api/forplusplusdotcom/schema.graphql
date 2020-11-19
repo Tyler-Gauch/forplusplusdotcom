@@ -30,3 +30,30 @@ type VideoLink {
   otherVideoId: String!
   text: String!
 }
+
+type Quiz
+  @model
+  @auth(
+    rules: [
+      {allow: groups, groups: ["subscribers", "admins"], operations: [read]},
+      {allow: groups, groups: ["admins"], operations: [create, update, delete]},
+    ]
+  ) {
+    id: ID!
+    videoId: ID!
+    questions: [Question!]!
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+}
+
+union Question = MultipleChoiceQuestion
+
+type MultipleChoiceQuestion {
+  type: QuestionType!
+  question: String!
+  answer: Int!
+  options: [String!]!
+}
+

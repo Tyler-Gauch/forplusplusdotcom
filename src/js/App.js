@@ -80,7 +80,10 @@ const App = ({setUser, addOrUpdateCourses, user, adminMode}) => {
       }
     });
 
-    getUser().then(userData => setUser(userData));
+    getUser().then(userData => {
+      setUser(userData);
+      console.log("This was set");
+    });
 
     API.graphql({...graphqlOperation(listCourses), authMode: 'API_KEY'}).then(response => {
       addOrUpdateCourses(response.data.listCourses.items);

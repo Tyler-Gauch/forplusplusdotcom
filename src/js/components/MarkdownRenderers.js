@@ -26,8 +26,6 @@ const imageRenderer = ({src, alt}) => {
     if (src) {
         const {altText, type} = parseAltText(alt);
 
-        console.log(src);
-
         switch (type) {
             case "button":
                 return (

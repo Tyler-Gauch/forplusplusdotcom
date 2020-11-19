@@ -1,6 +1,49 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getQuiz = /* GraphQL */ `
+  query GetQuiz($id: ID!) {
+    getQuiz(id: $id) {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listQuizs = /* GraphQL */ `
+  query ListQuizs(
+    $filter: ModelQuizFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listQuizs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        videoId
+        questions {
+          ... on MultipleChoiceQuestion {
+            type
+            question
+            answer
+            options
+          }
+        }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
 export const getCourse = /* GraphQL */ `
   query GetCourse($id: ID!) {
     getCourse(id: $id) {
@@ -49,14 +92,6 @@ export const listCourses = /* GraphQL */ `
           videoSrc
           description
           adminOnly
-          nextVideo {
-            otherVideoId
-            text
-          }
-          previousVideo {
-            otherVideoId
-            text
-          }
         }
         adminOnly
         createdAt

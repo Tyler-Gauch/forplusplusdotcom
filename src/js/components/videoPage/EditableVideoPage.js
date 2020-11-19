@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Storage } from 'aws-amplify';
 import Video from './Video';
-import {Row, Col, Alert, FormControl, InputGroup, Button, Spinner, Container, ButtonGroup, ButtonToolbar, Form} from 'react-bootstrap';
+import {Row, Col, Alert, FormControl, InputGroup, Button, ButtonGroup, ButtonToolbar, Form} from 'react-bootstrap';
 import { Link, Prompt } from 'react-router-dom';
 import '../../../css/components/VideoPage.scss';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
@@ -29,12 +29,13 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
 
     const [updateVideoError, setUpdateVideoError] = useState(null);
     const [updateVideoSuccess, setUpdateVideoSuccess] = useState(null);
-    const [newTitle, setNewTitle] = useState(video.title);
-    const [newDescription, setNewDescription] = useState(video.description);
-    const [newSrc, setNewSrc] = useState(video.videoSrc);
-    const [newAdminOnly, setNewAdminOnly] = useState(video.adminOnly);
+    const [newVideo, setNewVideo] = useState(video);
+    const setNewTitle = title => setNewVideo({...newVideo, title: title, id: encodeTitleToId(title)});
+    const setNewDescription = description => setNewVideo({...newVideo, description});
+    const setNewSrc = videoSrc => setNewVideo({...newVideo, videoSrc});
+    const setNewAdminOnly = adminOnly => setNewVideo({...newVideo, adminOnly});
 
-    const toggleAdminOnly = () => setNewAdminOnly(!newAdminOnly);
+    const toggleAdminOnly = () => setNewAdminOnly(!newVideo.adminOnly);
 
     const handlePaste = (e) => {
         if (e.clipboardData && e.clipboardData.items) {
@@ -51,8 +52,7 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
 
                 Storage.put(fileName, blob)
                     .then (result => {
-                        
-                        setNewDescription(`${newDescription}\n![:s3](${fileName})`);
+                        setNewDescription(`${newVideo.description}\n![:s3](${fileName})`);
                     })
                     .catch(err => console.log(err));
   
@@ -73,19 +73,6 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
             return;
         }
 
-        const fieldsToUpdate = {
-            id: encodeTitleToId(newTitle),
-            title: newTitle,
-            description: newDescription,
-            videoSrc: newSrc,
-            adminOnly: newAdminOnly
-        };
-
-        const newVideo = {
-            ...video,
-            ...fieldsToUpdate
-        };
-
         const updatedCourse = replaceVideo(course, video.id, newVideo);
         
         if (updatedCourse === null) {
@@ -94,7 +81,7 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
         }
 
         const {createdAt, updatedAt, ...newCourse } = updatedCourse;
-        const refreshPage = video.id !== fieldsToUpdate.id;
+        const refreshPage = video.id !== newVideo.id;
 
         API.graphql(graphqlOperation(updateCourse, {input: newCourse}))
             .then((response) => {
@@ -110,24 +97,21 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
     }
 
     const hasChangesToSave = () => {
-        return newTitle !== video.title
-            || newDescription !== video.description
-            || newSrc !== video.videoSrc
-            || newAdminOnly !== video.adminOnly;
+        return newVideo !== video;
     }
 
     const validateSave = () => {
         const errors = [];
 
-        if (!newTitle) {
+        if (!newVideo.title) {
             errors.push("Title cannot be empty.");
         }
 
-        if (!newDescription) {
+        if (!newVideo.description) {
             errors.push("Description cannot be empty.");
         }
 
-        if (!newSrc) {
+        if (!newVideo.videoSrc) {
             errors.push("Video source cannot be empty.");
         }
 
@@ -156,14 +140,14 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
                         </ButtonGroup>
                         <ButtonGroup className="mr-2" aria-label="Admin buttons">
                             <Button variant="primary" onClick={toggleAdminOnly}>
-                                {newAdminOnly ? "Publish Video" : "Remove Video"}
+                                {newVideo.adminOnly ? "Publish Video" : "Remove Video"}
                             </Button>
                         </ButtonGroup>
                     </ButtonToolbar>
                 </Row>
                 <Form.Group>
                     <Form.Label>Video Url</Form.Label>
-                    <Form.Control type="url" placeholder="video url" defaultValue={newSrc} onChange={(e) => setNewSrc(e.target.value)} />
+                    <Form.Control type="url" placeholder="video url" defaultValue={newVideo.videoSrc} onChange={(e) => setNewSrc(e.target.value)} />
                 </Form.Group>
                 {updateVideoError && <Row>
                     <Alert variant="danger">
@@ -182,7 +166,7 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
                 <Col lg={10}>
                     <Row className="justify-content-center align-items-end shadow-sm p-3">
                         <Col lg={{offset: 1, span: 7}}>
-                            <Video src={newSrc} title={video.title}/>
+                            <Video src={newVideo.videoSrc} title={newVideo.title}/>
                         </Col>
                         <Col lg={12}>
                             <Row>
@@ -207,11 +191,11 @@ const EditableVideoPage = ({course, video, addOrUpdateCourses}) => {
             <Row className="shadow-sm pl-5 pr-5 pt-3 pb-3">
                 <Col lg={6}>
                     <InputGroup className="fill-height">
-                        <FormControl as="textarea" aria-label="With textarea" value={newDescription} onChange={event => setNewDescription(event.target.value)} onPaste={handlePaste} />
+                        <FormControl as="textarea" aria-label="With textarea" value={newVideo.description} onChange={event => setNewDescription(event.target.value)} onPaste={handlePaste} />
                     </InputGroup>
                 </Col>
                 <Col lg={6}>
-                    <Markdown>{newDescription}</Markdown>
+                    <Markdown>{newVideo.description}</Markdown>
                 </Col>
             </Row>
         </>)

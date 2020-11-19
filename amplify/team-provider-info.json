@@ -12,10 +12,17 @@
       "AmplifyAppId": "d1nzho3748n0rz"
     },
     "categories": {
+      "function": {
+        "forplusplusdotcom0c8ab359PostConfirmation": {
+          "GROUP": "subscribers"
+        }
+      },
       "auth": {
         "forplusplusdotcom0c8ab359": {
-          "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"889531941755-oe8ias9eje2otn405v5mkhh5jje65pka.apps.googleusercontent.com\",\"client_secret\":\"5GBqdyoeCD1t9GCKCRJzN_2m\"}]"
-        }
+          "hostedUIProviderCreds": "[{\"ProviderName\":\"Google\",\"client_id\":\"889531941755-oe8ias9eje2otn405v5mkhh5jje65pka.apps.googleusercontent.com\",\"client_secret\":\"5GBqdyoeCD1t9GCKCRJzN_2m\"}]",
+          "googleClientId": "889531941755-oe8ias9eje2otn405v5mkhh5jje65pka.apps.googleusercontent.com"
+        },
+        "userPoolGroups": {}
       }
     }
   }

@@ -97,3 +97,66 @@ export const deleteCourse = /* GraphQL */ `
     }
   }
 `;
+export const createQuiz = /* GraphQL */ `
+  mutation CreateQuiz(
+    $input: CreateQuizInput!
+    $condition: ModelQuizConditionInput
+  ) {
+    createQuiz(input: $input, condition: $condition) {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateQuiz = /* GraphQL */ `
+  mutation UpdateQuiz(
+    $input: UpdateQuizInput!
+    $condition: ModelQuizConditionInput
+  ) {
+    updateQuiz(input: $input, condition: $condition) {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteQuiz = /* GraphQL */ `
+  mutation DeleteQuiz(
+    $input: DeleteQuizInput!
+    $condition: ModelQuizConditionInput
+  ) {
+    deleteQuiz(input: $input, condition: $condition) {
+      id
+      videoId
+      questions {
+        ... on MultipleChoiceQuestion {
+          type
+          question
+          answer
+          options
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;

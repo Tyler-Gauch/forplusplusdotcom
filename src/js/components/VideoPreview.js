@@ -23,9 +23,15 @@ const createAction = (type, payload) => {
 const VideoPreview = ({courseId, video, adminMode, user, onAdminChange, moveVideo, index}) => {
     const history = useHistory();
     const ref = useRef(null);
+    const isInAdminMode = (adminMode && verifyUserIsAdmin(user));
+
     const [, drop] = useDrop({
         accept: DRAG_TYPE,
         hover(item, monitor) {
+            if (!isInAdminMode) {
+                return;
+            }
+
             if (!ref.current) {
                 return;
             }
@@ -72,19 +78,21 @@ const VideoPreview = ({courseId, video, adminMode, user, onAdminChange, moveVide
             isDragging: monitor.isDragging(),
         }),
     });
-    drag(drop(ref));
-
-    const canShowAdminMode = adminMode && verifyUserIsAdmin(user);
+    if (isInAdminMode) {
+        drag(drop(ref));
+    }
 
     const opacity = isDragging ? 0 : 1;
+
+    const bodyStyle = isInAdminMode ? {cursor: "move"} : {};
 
     return (
         <>
             <Card style={{width: '15rem', opacity}} ref={ref}>
                 <Card.Img className="clickable" variant="top" src={video.thumbnailUrl} onClick={() => history.push(buildVideoUrl(courseId, video.id))}/>
-                <Card.Body style={{cursor: "move"}}>
+                <Card.Body style={bodyStyle}>
                     <h5>{video.title}</h5>
-                    {canShowAdminMode &&
+                    {isInAdminMode &&
                         <Dropdown>
                             <Dropdown.Toggle>
                                 Admin Actions
